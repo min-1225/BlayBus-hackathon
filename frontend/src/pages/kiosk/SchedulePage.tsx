@@ -1,26 +1,113 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { KioskLayout } from '@/components/KioskLayout'
+import { ErrorView, LoadingView, EmptyView } from '@/components/StatusView'
+import { getSchedules } from '@/api/sessionApi'
+import { toUserMessage } from '@/api/http'
+import type { ScheduleOption } from '@/mocks/data'
 import { useKioskSession } from '@/session/kioskSessionContext'
 
 /**
  * 출발 시간 / 버스 등급 선택.
- *
- * TODO(Frontend A):
- *   getSchedules(session.destination) 으로 시간표를 불러온다
- *   출발시간 / 버스종류 / 남은좌석 을 시각적으로 분리해서 보여준다 (FRONTEND_GUIDE §7)
- *   선택 시 patch({ departureTime, busGrade, currentStep: 'SEAT_SELECTION' })
- *   남은 좌석 0 인 편은 선택 불가로 표시한다
- *
- * 참고 구현: DestinationPage.tsx
  */
 export default function SchedulePage() {
-  const { session } = useKioskSession()
+  const navigate = useNavigate()
+  const { session, patch, isLoading: isSaving } = useKioskSession()
+  const [schedules, setSchedules] = useState<ScheduleOption[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const destination = session?.destination
+  const travelDate = session?.travelDate
+
+  useEffect(() => {
+    if (!destination || !travelDate) {
+      return
+    }
+
+    let cancelled = false
+
+    getSchedules(destination)
+      .then((loaded) => {
+        if (!cancelled) setSchedules(loaded)
+      })
+      .catch((caught: unknown) => {
+        if (!cancelled) setError(toUserMessage(caught))
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [destination, travelDate])
+
+  async function selectSchedule(schedule: ScheduleOption) {
+    if (schedule.remainingSeats === 0) return
+
+    const updated = await patch({
+      departureTime: schedule.departureTime,
+      busGrade: schedule.busGrade,
+      currentStep: 'SEAT_SELECTION',
+    })
+    if (updated) navigate('/kiosk/seat')
+  }
 
   return (
     <KioskLayout step="SCHEDULE" question="몇 시 버스를 타시나요?">
-      <p className="text-kiosk-body text-muted">
-        {session?.destination ?? '목적지 미선택'} · {session?.travelDate ?? '날짜 미선택'} 시간표를
-        구현하세요.
-      </p>
+      {!destination || !travelDate ? (
+        <EmptyView message="목적지와 날짜를 먼저 선택해 주세요." />
+      ) : isLoading ? (
+        <LoadingView message="버스 시간을 불러오는 중입니다" />
+      ) : error ? (
+        <ErrorView message={error} />
+      ) : schedules.length === 0 ? (
+        <EmptyView message="선택할 수 있는 버스가 없습니다." />
+      ) : (
+        <div className="space-y-4">
+          <p className="text-kiosk-body text-muted">
+            {destination} · {travelDate}
+          </p>
+
+          {schedules.map((schedule) => {
+            const isSoldOut = schedule.remainingSeats === 0
+            const isSelected =
+              session.departureTime === schedule.departureTime &&
+              session.busGrade === schedule.busGrade
+
+            return (
+              <button
+                key={schedule.id}
+                type="button"
+                onClick={() => selectSchedule(schedule)}
+                disabled={isSoldOut || isSaving}
+                aria-pressed={isSelected}
+                className={`w-full rounded-2xl border-2 p-6 text-left transition-colors active:scale-[0.98] disabled:cursor-not-allowed ${
+                  isSoldOut
+                    ? 'bg-surface-muted border-line text-muted opacity-60'
+                    : isSelected
+                      ? 'bg-brand border-brand text-white'
+                      : 'bg-surface border-line hover:border-brand text-ink'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-kiosk-title font-bold">{schedule.departureTime}</span>
+                  <span className="text-kiosk-body font-bold">
+                    {isSoldOut ? '매진' : `${schedule.remainingSeats}석 남음`}
+                  </span>
+                </div>
+                <div
+                  className={`text-kiosk-label mt-2 flex justify-between ${isSelected ? 'text-white/80' : 'text-muted'}`}
+                >
+                  <span>{schedule.busGrade === 'PREMIUM' ? '우등' : '일반'}</span>
+                  <span>{schedule.fareWon.toLocaleString('ko-KR')}원</span>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
     </KioskLayout>
   )
 }
