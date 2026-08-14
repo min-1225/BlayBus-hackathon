@@ -30,43 +30,53 @@ export function KioskLayout({
   const { error, clearError } = useKioskSession()
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <header className="bg-surface border-line border-b px-8 py-5">
-        <StepIndicator current={step} />
-      </header>
-
-      <main className="mx-auto w-full max-w-3xl flex-1 px-8 py-10">
-        <h1 className="text-kiosk-title mb-8 font-bold">{question}</h1>
-
-        {error && (
-          <div
-            role="alert"
-            className="border-danger/30 bg-danger/5 text-kiosk-body text-danger mb-6 flex items-center justify-between gap-4 rounded-2xl border-2 p-5 font-bold"
-          >
-            <span>{error}</span>
-            <button
-              onClick={clearError}
-              className="text-kiosk-label underline"
-              aria-label="오류 메시지 닫기"
-            >
-              닫기
-            </button>
+    <div className="min-h-dvh bg-[#20252b] p-0 lg:p-6">
+      <div className="bg-surface mx-auto flex min-h-dvh max-w-6xl flex-col shadow-2xl lg:min-h-[calc(100dvh-3rem)]">
+        <header className="border-brand border-b-4 bg-[#eef1f4] px-6 py-5 lg:px-10">
+          <div className="border-line mb-5 flex items-center justify-between border-b pb-3">
+            <p className="text-kiosk-label text-brand-strong font-bold tracking-wide">
+              KIOBRIDGE BUS
+            </p>
+            <p className="text-kiosk-label text-muted">승차권 발권</p>
           </div>
+          <StepIndicator current={step} />
+        </header>
+
+        <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-9 lg:px-10 lg:py-12">
+          <h1 className="text-kiosk-title border-brand mb-10 border-l-8 pl-5 font-bold">
+            {question}
+          </h1>
+
+          {error && (
+            <div
+              role="alert"
+              className="border-danger/30 bg-danger/5 text-kiosk-body text-danger mb-6 flex items-center justify-between gap-4 rounded-2xl border-2 p-5 font-bold"
+            >
+              <span>{error}</span>
+              <button
+                onClick={clearError}
+                className="text-kiosk-label underline"
+                aria-label="오류 메시지 닫기"
+              >
+                닫기
+              </button>
+            </div>
+          )}
+
+          {children}
+        </main>
+
+        {showHelp && (
+          <footer className="border-line border-t-2 bg-[#eef1f4] px-6 py-5 lg:px-10">
+            <button
+              onClick={() => navigate('/kiosk/help')}
+              className="bg-warning text-kiosk-body h-touch text-ink w-full border-2 border-[#9a6b00] font-bold transition-colors hover:bg-[#e6b51e] active:scale-[0.99]"
+            >
+              잘 모르겠어요 · 직원 도움 요청
+            </button>
+          </footer>
         )}
-
-        {children}
-      </main>
-
-      {showHelp && (
-        <footer className="bg-surface border-line sticky bottom-0 border-t px-8 py-5">
-          <button
-            onClick={() => navigate('/kiosk/help')}
-            className="bg-warning text-kiosk-body h-touch text-ink w-full rounded-2xl font-bold active:scale-[0.98]"
-          >
-            잘 모르겠어요 · 도움받기
-          </button>
-        </footer>
-      )}
+      </div>
     </div>
   )
 }

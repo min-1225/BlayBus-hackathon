@@ -24,7 +24,7 @@ export function StepIndicator({ current }: { current: BookingStep }) {
             key={step}
             aria-current={isCurrent ? 'step' : undefined}
             className={[
-              'text-kiosk-label flex items-center gap-1 rounded-full px-3 py-1 font-semibold',
+              'text-kiosk-label border-line flex items-center gap-2 border-l-2 px-3 py-1 font-semibold',
               isCurrent && 'bg-brand text-white',
               isDone && 'bg-brand-soft text-brand-strong',
               !isCurrent && !isDone && 'text-muted',

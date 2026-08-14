@@ -34,7 +34,7 @@ export function BigButton({
 
   return (
     <button
-      className={`${height} ${VARIANT_CLASS[variant]} w-full rounded-2xl px-6 font-bold transition-colors active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
+      className={`${height} ${VARIANT_CLASS[variant]} w-full border-2 px-6 font-bold transition-colors active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
       {...rest}
     >
       {children}

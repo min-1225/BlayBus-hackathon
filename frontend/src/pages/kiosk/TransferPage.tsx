@@ -48,7 +48,8 @@ export default function TransferPage() {
       question="직원에게 이 번호를 알려주세요"
       showHelp={false}
     >
-      <div className="bg-brand-soft border-brand mb-8 rounded-3xl border-4 py-12 text-center">
+      <div className="border-brand mb-8 border-y-4 bg-[#f4f6f8] py-10 text-center">
+        <p className="text-kiosk-label text-muted mb-3">이어하기 번호</p>
         <p className="text-kiosk-code text-brand-strong font-bold tracking-[0.15em] tabular-nums">
           {session.transferCode}
         </p>
@@ -64,7 +65,7 @@ export default function TransferPage() {
         role="status"
         aria-live="polite"
       >
-        <span className="bg-success size-3 animate-pulse rounded-full" />
+        <span className="bg-success size-2" />
         <span className="text-kiosk-label text-muted">직원 연결을 기다리는 중</span>
       </div>
     </KioskLayout>
