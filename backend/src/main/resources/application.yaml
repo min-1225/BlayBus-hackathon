@@ -1,9 +1,9 @@
 spring:
   application:
     name: backend
+  # 기본(로컬/테스트) 프로파일 — H2 인메모리. 드라이버는 URL 로부터 자동 추론한다.
   datasource:
     url: jdbc:h2:mem:kiobridge
-    driver-class-name: org.h2.Driver
     username: sa
     password:
   jpa:
@@ -12,3 +12,12 @@ spring:
   h2:
     console:
       enabled: true
+
+server:
+  # Render 등 PaaS 는 PORT 를 주입한다. 없으면 로컬 기본 8080.
+  port: ${PORT:8080}
+
+app:
+  cors:
+    # 쉼표로 구분된 허용 Origin. 배포 시 APP_CORS_ALLOWED_ORIGINS 로 Vercel URL 을 주입한다.
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174}

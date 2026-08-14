@@ -1,0 +1,19 @@
+# 배포(prod) 프로파일 — Supabase Postgres.
+# 접속정보는 코드에 두지 않고 Render 환경변수로 주입한다:
+#   SPRING_DATASOURCE_URL       (예: jdbc:postgresql://<host>:5432/postgres?sslmode=require)
+#   SPRING_DATASOURCE_USERNAME
+#   SPRING_DATASOURCE_PASSWORD
+#   APP_CORS_ALLOWED_ORIGINS    (예: https://<your-app>.vercel.app)
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    # 드라이버는 postgres URL 로부터 자동 추론된다.
+  jpa:
+    hibernate:
+      # 배포 환경에서는 스키마를 유지한다(재시작해도 데이터 보존).
+      ddl-auto: update
+  h2:
+    console:
+      enabled: false
