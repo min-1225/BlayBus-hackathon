@@ -128,13 +128,17 @@ KioBridge Assist는 이 문제를 다음과 같이 해결합니다.
 
 ## 4. 기술 스택
 
+확정된 스택과 선택 근거는 [`docs/TECH_STACK.md`](docs/TECH_STACK.md)에 있습니다.
+
 ### Frontend
 
-- React
-- TypeScript 권장
+- React 19 + TypeScript + Vite
 - React Router
-- HTTP Client: `fetch` 또는 `axios` 중 팀에서 하나로 통일
-- STOMP Client
+- Tailwind CSS 4 (Easy Mode 토큰)
+- HTTP Client: `fetch` (`src/api/http.ts` 래퍼로 통일)
+- MSW — Backend 없이 개발/데모 가능한 가짜 Backend
+- 상태: Context + useReducer
+- STOMP Client (`@stomp/stompjs`)
 - 하나의 Frontend 프로젝트에서 `/kiosk`, `/staff` 분리
 
 ### Backend
@@ -344,18 +348,19 @@ Kiosk에서 예매
 1. [`README.md`](README.md)
 2. [`docs/TEAM.md`](docs/TEAM.md)
 3. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-4. [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md)
-5. 자신의 파트 가이드
-   - Frontend → [`docs/FRONTEND_GUIDE.md`](docs/FRONTEND_GUIDE.md)
+4. [`docs/TECH_STACK.md`](docs/TECH_STACK.md)
+5. [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md)
+6. 자신의 파트 가이드
+   - Frontend → [`docs/FRONTEND_GUIDE.md`](docs/FRONTEND_GUIDE.md) → [`frontend/README.md`](frontend/README.md)
    - Backend → [`docs/BACKEND_GUIDE.md`](docs/BACKEND_GUIDE.md)
-6. [`docs/DEVELOPMENT_FLOW.md`](docs/DEVELOPMENT_FLOW.md)
-7. [`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md)
+7. [`docs/DEVELOPMENT_FLOW.md`](docs/DEVELOPMENT_FLOW.md)
+8. [`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md)
 
 통합 담당자는 추가로:
 
-8. [`docs/INTEGRATION_GUIDE.md`](docs/INTEGRATION_GUIDE.md)
-9. [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md)
-10. [`docs/TEST_SCENARIO.md`](docs/TEST_SCENARIO.md)
+9. [`docs/INTEGRATION_GUIDE.md`](docs/INTEGRATION_GUIDE.md)
+10. [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md)
+11. [`docs/TEST_SCENARIO.md`](docs/TEST_SCENARIO.md)
 
 ---
 
