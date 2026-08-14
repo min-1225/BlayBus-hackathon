@@ -121,6 +121,47 @@ Response `201`:
 
 ---
 
+# 3.1 Get Session By Id
+
+> Frontend(`src/api/sessionApi.ts`)가 사용하는 단건 조회. 실시간 이벤트 수신 후 최신 상태를 다시 읽을 때도 이 API 를 쓴다.
+
+```http
+GET /api/v1/sessions/{sessionId}
+```
+
+Response `200`:
+
+전체 Session(2. Session Model).
+
+```json
+{
+  "id": 123,
+  "status": "ACTIVE",
+  "currentStep": "SCHEDULE",
+  "departure": "동서울",
+  "destination": "강릉",
+  "travelDate": "2026-08-14",
+  "departureTime": "11:30",
+  "busGrade": "PREMIUM",
+  "seatNo": null,
+  "transferCode": null,
+  "createdAt": "2026-08-14T10:30:00",
+  "updatedAt": "2026-08-14T10:32:00"
+}
+```
+
+Not Found:
+
+```json
+{ "code": "SESSION_NOT_FOUND", "message": "세션을 찾을 수 없습니다." }
+```
+
+```http
+404
+```
+
+---
+
 # 4. Update Session
 
 ```http
@@ -273,6 +314,44 @@ Response:
 ```
 
 Complete 성공 직후 Backend는 WebSocket Event를 Publish합니다.
+
+---
+
+# 8.1 Get Schedules
+
+> Frontend(`src/api/sessionApi.ts`, `src/mocks/data.ts`)가 사용하는 시간표 조회. 데모용 고정 데이터로 제공한다.
+
+```http
+GET /api/v1/schedules?destination=강릉
+```
+
+Query:
+
+- `destination` — 목적지 이름. 지원 목적지: 강릉, 속초, 춘천, 원주, 안동, 전주.
+
+Response `200` (배열, Frontend 의 `ScheduleOption` 과 1:1 대응):
+
+```json
+[
+  {
+    "id": "gn-1130",
+    "departureTime": "11:30",
+    "busGrade": "PREMIUM",
+    "fareWon": 22500,
+    "remainingSeats": 8
+  }
+]
+```
+
+필드:
+
+- `id` — 시간표 식별자(문자열)
+- `departureTime` — `HH:mm`
+- `busGrade` — `STANDARD` | `PREMIUM`
+- `fareWon` — 요금(정수, 원)
+- `remainingSeats` — 잔여 좌석 수(정수)
+
+알 수 없는 목적지는 빈 배열 `[]` 을 반환한다.
 
 ---
 
