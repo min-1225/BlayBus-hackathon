@@ -4,10 +4,13 @@ import com.kiobridge.backend.common.ApiException;
 import com.kiobridge.backend.common.ErrorCode;
 import com.kiobridge.backend.session.dto.TransferResponse;
 import com.kiobridge.backend.session.dto.UpdateSessionRequest;
+import com.kiobridge.backend.websocket.SessionEvent;
+import com.kiobridge.backend.websocket.SessionEventType;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +29,14 @@ public class SessionService {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final SessionRepository sessionRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final Clock clock;
 
-    public SessionService(SessionRepository sessionRepository, Clock clock) {
+    public SessionService(SessionRepository sessionRepository,
+                          ApplicationEventPublisher eventPublisher,
+                          Clock clock) {
         this.sessionRepository = sessionRepository;
+        this.eventPublisher = eventPublisher;
         this.clock = clock;
     }
 
@@ -74,6 +81,7 @@ public class SessionService {
         }
 
         touch(session);
+        publish(SessionEventType.SESSION_UPDATED, session.getId());
         return session;
     }
 
@@ -134,6 +142,7 @@ public class SessionService {
 
         session.setStatus(SessionStatus.CLAIMED);
         touch(session);
+        publish(SessionEventType.SESSION_CLAIMED, session.getId());
         return session;
     }
 
@@ -153,6 +162,7 @@ public class SessionService {
         session.setStatus(SessionStatus.COMPLETED);
         session.setCurrentStep(BookingStep.COMPLETED);
         touch(session);
+        publish(SessionEventType.SESSION_COMPLETED, session.getId());
         return session;
     }
 
@@ -173,6 +183,14 @@ public class SessionService {
 
     private void touch(OrderSession session) {
         session.setUpdatedAt(now());
+    }
+
+    /**
+     * 도메인 이벤트를 발행한다. 실제 WS 전송은 {@code AFTER_COMMIT} 단계에서 이뤄지므로
+     * (SessionEventPublisher 참조) 트랜잭션이 커밋된 뒤에만 Frontend 로 신호가 나간다.
+     */
+    private void publish(SessionEventType type, Long sessionId) {
+        eventPublisher.publishEvent(SessionEvent.of(type, sessionId, now()));
     }
 
     private LocalDateTime now() {
