@@ -17,7 +17,7 @@ export default function SeatPage() {
   }
 
   return (
-    <KioskLayout step="SEAT_SELECTION" question="어느 자리에 앉으시겠어요?">
+    <KioskLayout step="SEAT_SELECTION" question="좌석을 선택하세요">
       {!busGrade ? (
         <EmptyView message="시간과 버스 종류를 먼저 선택해 주세요." />
       ) : (
@@ -26,7 +26,7 @@ export default function SeatPage() {
             {session?.departureTime} · {busGrade === 'PREMIUM' ? '우등' : '일반'}
           </p>
           <p className="text-kiosk-label text-muted mb-6">
-            회색 좌석은 이미 선택되었습니다. 원하는 좌석을 눌러 주세요.
+            회색 좌석은 판매 완료입니다. 원하는 좌석을 누르면 저장됩니다.
           </p>
 
           <SeatGrid
@@ -61,8 +61,8 @@ function SeatGrid({
   const layout = seatLayout(busGrade)
 
   return (
-    <div className="bg-surface border-line rounded-3xl border-2 p-5 sm:p-8">
-      <div className="text-kiosk-label text-muted mb-6 text-center">앞쪽</div>
+    <div className="bg-surface-muted border-line rounded-xl border p-5 sm:p-8">
+      <div className="text-kiosk-label text-muted mb-6 text-center">전면 (운전석)</div>
       <div className="space-y-3">
         {Array.from({ length: layout.rows }, (_, rowIndex) => (
           <div key={rowIndex} className="flex items-center gap-3">
@@ -83,7 +83,7 @@ function SeatGrid({
                     onClick={() => onSelect(seatNo)}
                     aria-pressed={isSelected}
                     aria-label={`${seatNo}번 좌석${isOccupied ? ', 선택 불가' : ''}`}
-                    className={`text-kiosk-label min-h-14 rounded-xl border-2 font-bold transition-colors active:scale-[0.98] disabled:cursor-not-allowed ${
+                    className={`text-kiosk-label min-h-14 rounded-lg border font-bold transition-colors active:scale-[0.98] disabled:cursor-not-allowed ${
                       isOccupied
                         ? 'bg-surface-muted border-line text-muted'
                         : isSelected

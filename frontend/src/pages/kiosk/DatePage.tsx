@@ -17,12 +17,12 @@ export default function DatePage() {
   }
 
   return (
-    <KioskLayout step="DATE" question="언제 출발하시나요?">
+    <KioskLayout step="DATE" question="출발 날짜를 선택하세요">
       <p className="text-kiosk-body text-muted mb-6">
         {session?.destination ?? '목적지를 먼저 선택해 주세요'}행
       </p>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {dates.map((date) => {
           const isSelected = session?.travelDate === date.value
 
@@ -33,7 +33,7 @@ export default function DatePage() {
               onClick={() => selectDate(date.value)}
               disabled={isLoading || !session?.destination}
               aria-pressed={isSelected}
-              className={`h-touch-lg rounded-2xl border-2 px-6 text-left font-bold transition-colors active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 ${
+              className={`h-touch rounded-lg border px-5 text-left font-bold transition-colors active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 ${
                 isSelected
                   ? 'bg-brand border-brand text-white'
                   : 'bg-surface border-line hover:border-brand text-ink'

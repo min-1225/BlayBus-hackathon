@@ -12,13 +12,13 @@
  */
 @theme {
   /* Brand */
-  --color-brand: oklch(0.46 0.12 245);
-  --color-brand-strong: oklch(0.35 0.11 245);
-  --color-brand-soft: oklch(0.94 0.02 245);
+  --color-brand: oklch(0.5 0.15 250);
+  --color-brand-strong: oklch(0.38 0.13 250);
+  --color-brand-soft: oklch(0.94 0.03 250);
 
   /* Semantic */
   --color-surface: oklch(1 0 0);
-  --color-surface-muted: oklch(0.93 0.006 245);
+  --color-surface-muted: oklch(0.93 0.008 250);
   --color-ink: oklch(0.19 0.008 245);
   --color-muted: oklch(0.43 0.012 245);
   --color-line: oklch(0.82 0.012 245);
@@ -48,7 +48,7 @@
   }
 
   body {
-    @apply text-ink bg-[#20252b] antialiased;
+    @apply text-ink bg-surface-muted antialiased;
     font-family:
       'Pretendard',
       system-ui,

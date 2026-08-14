@@ -36,13 +36,13 @@ export default function HelpPage() {
       question="지금까지 고르신 내용이에요"
       showHelp={false}
     >
-      <dl className="bg-surface border-line mb-8 divide-y divide-dashed rounded-2xl border-2">
+      <dl className="bg-surface-muted border-line mb-8 divide-y rounded-xl border">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center justify-between gap-4 px-6 py-5">
             <dt className="text-kiosk-body text-muted">{row.label}</dt>
             <dd className="text-kiosk-body font-bold">
               {row.value ? (
-                <span className="text-success">✓ {row.value}</span>
+                <span className="text-success">{row.value}</span>
               ) : (
                 <span className="text-muted">아직 선택 안 함</span>
               )}

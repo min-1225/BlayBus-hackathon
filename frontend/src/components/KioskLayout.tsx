@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router'
 import type { ReactNode } from 'react'
 import { StepIndicator } from './StepIndicator'
+import { BookingSummary } from './BookingSummary'
 import { useKioskSession } from '@/session/kioskSessionContext'
 import type { BookingStep } from '@/types/session'
 
@@ -30,52 +31,53 @@ export function KioskLayout({
   const { error, clearError } = useKioskSession()
 
   return (
-    <div className="min-h-dvh bg-[#20252b] p-0 lg:p-6">
-      <div className="bg-surface mx-auto flex min-h-dvh max-w-6xl flex-col shadow-2xl lg:min-h-[calc(100dvh-3rem)]">
-        <header className="border-brand border-b-4 bg-[#eef1f4] px-6 py-5 lg:px-10">
-          <div className="border-line mb-5 flex items-center justify-between border-b pb-3">
+    <div className="bg-surface-muted min-h-dvh">
+      <div className="mx-auto min-h-dvh max-w-7xl">
+        <header className="bg-surface border-line border-b px-6 py-5 lg:px-10">
+          <div className="mb-5 flex items-center justify-between">
             <p className="text-kiosk-label text-brand-strong font-bold tracking-wide">
               KIOBRIDGE BUS
             </p>
-            <p className="text-kiosk-label text-muted">승차권 발권</p>
+            <p className="text-kiosk-label text-muted">고속버스 예매</p>
           </div>
           <StepIndicator current={step} />
         </header>
 
-        <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-9 lg:px-10 lg:py-12">
-          <h1 className="text-kiosk-title border-brand mb-10 border-l-8 pl-5 font-bold">
-            {question}
-          </h1>
+        <main className="grid w-full gap-5 px-5 py-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:px-10 lg:py-8">
+          <section className="bg-surface border-line rounded-xl border p-6 lg:p-8">
+            <h1 className="text-kiosk-title mb-8 font-bold">{question}</h1>
 
-          {error && (
-            <div
-              role="alert"
-              className="border-danger/30 bg-danger/5 text-kiosk-body text-danger mb-6 flex items-center justify-between gap-4 rounded-2xl border-2 p-5 font-bold"
-            >
-              <span>{error}</span>
-              <button
-                onClick={clearError}
-                className="text-kiosk-label underline"
-                aria-label="오류 메시지 닫기"
+            {error && (
+              <div
+                role="alert"
+                className="border-danger bg-danger/5 text-kiosk-body text-danger mb-6 flex items-center justify-between gap-4 rounded-lg border p-5 font-bold"
               >
-                닫기
-              </button>
-            </div>
-          )}
+                <span>{error}</span>
+                <button
+                  onClick={clearError}
+                  className="text-kiosk-label underline"
+                  aria-label="오류 메시지 닫기"
+                >
+                  닫기
+                </button>
+              </div>
+            )}
 
-          {children}
+            {children}
+
+            {showHelp && (
+              <footer className="border-line mt-8 border-t pt-6">
+                <button
+                  onClick={() => navigate('/kiosk/help')}
+                  className="bg-brand text-kiosk-body h-touch hover:bg-brand-strong w-full font-bold text-white transition-colors active:scale-[0.99]"
+                >
+                  직원 도움 요청
+                </button>
+              </footer>
+            )}
+          </section>
+          <BookingSummary />
         </main>
-
-        {showHelp && (
-          <footer className="border-line border-t-2 bg-[#eef1f4] px-6 py-5 lg:px-10">
-            <button
-              onClick={() => navigate('/kiosk/help')}
-              className="bg-warning text-kiosk-body h-touch text-ink w-full border-2 border-[#9a6b00] font-bold transition-colors hover:bg-[#e6b51e] active:scale-[0.99]"
-            >
-              잘 모르겠어요 · 직원 도움 요청
-            </button>
-          </footer>
-        )}
       </div>
     </div>
   )

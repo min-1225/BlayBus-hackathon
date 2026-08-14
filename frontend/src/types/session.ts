@@ -65,11 +65,11 @@ export const STEP_SEQUENCE: BookingStep[] = [
 ]
 
 export const STEP_LABEL: Record<BookingStep, string> = {
-  DESTINATION: '목적지',
+  DESTINATION: '노선',
   DATE: '날짜',
   SCHEDULE: '시간',
   SEAT_SELECTION: '좌석',
-  CONFIRMATION: '확인',
-  PAYMENT: '결제',
+  CONFIRMATION: '직원 도움',
+  PAYMENT: '완료 대기',
   COMPLETED: '완료',
 }
