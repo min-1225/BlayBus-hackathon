@@ -12,22 +12,22 @@
  */
 @theme {
   /* Brand */
-  --color-brand: oklch(0.55 0.18 250);
-  --color-brand-strong: oklch(0.45 0.19 250);
-  --color-brand-soft: oklch(0.95 0.03 250);
+  --color-brand: oklch(0.5 0.15 250);
+  --color-brand-strong: oklch(0.38 0.13 250);
+  --color-brand-soft: oklch(0.94 0.03 250);
 
   /* Semantic */
   --color-surface: oklch(1 0 0);
-  --color-surface-muted: oklch(0.97 0.005 250);
-  --color-ink: oklch(0.22 0.01 250);
-  --color-muted: oklch(0.52 0.02 250);
-  --color-line: oklch(0.9 0.01 250);
+  --color-surface-muted: oklch(0.93 0.008 250);
+  --color-ink: oklch(0.19 0.008 245);
+  --color-muted: oklch(0.43 0.012 245);
+  --color-line: oklch(0.82 0.012 245);
   --color-success: oklch(0.6 0.15 150);
   --color-danger: oklch(0.58 0.2 25);
   --color-warning: oklch(0.75 0.16 75);
 
   /* Easy Mode Typography — 고령 사용자 기준으로 크게 */
-  --text-kiosk-title: 2.75rem;
+  --text-kiosk-title: 2.5rem;
   --text-kiosk-title--line-height: 1.2;
   --text-kiosk-body: 1.5rem;
   --text-kiosk-body--line-height: 1.5;
@@ -48,7 +48,7 @@
   }
 
   body {
-    @apply bg-surface-muted text-ink antialiased;
+    @apply text-ink bg-surface-muted antialiased;
     font-family:
       'Pretendard',
       system-ui,
@@ -56,6 +56,10 @@
       'Segoe UI',
       'Malgun Gothic',
       sans-serif;
+  }
+
+  button {
+    border-radius: 0.5rem;
   }
 
   /* 키보드 포커스는 항상 보이게 — 접근성 SHOULD 항목 */

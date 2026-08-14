@@ -22,14 +22,29 @@ export default function DestinationPage() {
   }
 
   return (
-    <KioskLayout step="DESTINATION" question="어디로 가시나요?">
-      <div className="grid grid-cols-2 gap-4">
+    <KioskLayout step="DESTINATION" question="출발지와 도착지를 선택하세요">
+      <div className="border-brand-soft bg-brand-soft mb-6 flex items-center justify-between rounded-lg border px-5 py-4">
+        <div>
+          <p className="text-kiosk-label text-muted">출발</p>
+          <p className="text-kiosk-body font-bold">동서울</p>
+        </div>
+        <span className="text-brand text-kiosk-title" aria-hidden>
+          →
+        </span>
+        <div className="text-right">
+          <p className="text-kiosk-label text-muted">도착</p>
+          <p className="text-kiosk-body text-muted">선택해 주세요</p>
+        </div>
+      </div>
+
+      <p className="text-kiosk-label text-muted mb-4">도착지를 눌러 다음 단계로 이동합니다.</p>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {DESTINATIONS.map((destination) => (
           <button
             key={destination}
             onClick={() => selectDestination(destination)}
             disabled={isLoading}
-            className="bg-surface border-line text-kiosk-title h-touch-lg hover:border-brand rounded-2xl border-2 font-bold transition-colors active:scale-[0.98] disabled:opacity-40"
+            className="bg-surface border-line text-kiosk-body h-touch hover:border-brand rounded-lg border font-bold transition-colors active:scale-[0.98] disabled:opacity-40"
           >
             {destination}
           </button>

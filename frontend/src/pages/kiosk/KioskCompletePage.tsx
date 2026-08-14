@@ -20,8 +20,8 @@ export default function KioskCompletePage() {
 
   return (
     <KioskLayout step="COMPLETED" question="예매가 완료되었습니다" showHelp={false}>
-      <div className="bg-surface border-success mb-8 rounded-3xl border-4 p-8">
-        <p className="text-kiosk-title text-success mb-6 text-center font-bold">✓ 발권 완료</p>
+      <div className="bg-surface border-success mb-8 rounded-xl border-2 p-8">
+        <p className="text-kiosk-title text-success mb-6 text-center font-bold">발권 완료</p>
 
         <dl className="divide-line divide-y">
           <Row label="출발" value={session?.departure} />

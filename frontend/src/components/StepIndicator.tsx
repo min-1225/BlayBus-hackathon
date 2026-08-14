@@ -8,13 +8,11 @@ import { STEP_LABEL, STEP_SEQUENCE, type BookingStep } from '@/types/session'
  * "지금 어디까지 왔는지"를 항상 보여주는 것이 이 프로젝트의 핵심 UX다.
  */
 
-const CIRCLED = ['①', '②', '③', '④', '⑤', '⑥']
-
 export function StepIndicator({ current }: { current: BookingStep }) {
   const currentIndex = STEP_SEQUENCE.indexOf(current)
 
   return (
-    <ol className="flex flex-wrap items-center gap-x-3 gap-y-2" aria-label="예매 진행 단계">
+    <ol className="grid grid-cols-3 gap-2 lg:grid-cols-6" aria-label="예매 진행 단계">
       {STEP_SEQUENCE.map((step, index) => {
         const isDone = currentIndex > index
         const isCurrent = currentIndex === index
@@ -24,15 +22,15 @@ export function StepIndicator({ current }: { current: BookingStep }) {
             key={step}
             aria-current={isCurrent ? 'step' : undefined}
             className={[
-              'text-kiosk-label flex items-center gap-1 rounded-full px-3 py-1 font-semibold',
-              isCurrent && 'bg-brand text-white',
-              isDone && 'bg-brand-soft text-brand-strong',
-              !isCurrent && !isDone && 'text-muted',
+              'text-kiosk-label border-line flex min-h-12 items-center justify-center gap-2 rounded-lg border px-3 py-2 font-semibold',
+              isCurrent && 'border-brand bg-brand-soft text-brand-strong',
+              isDone && 'border-success bg-success/10 text-ink',
+              !isCurrent && !isDone && 'bg-surface-muted text-muted',
             ]
               .filter(Boolean)
               .join(' ')}
           >
-            <span aria-hidden>{isDone ? '✓' : CIRCLED[index]}</span>
+            <span aria-hidden>{isDone ? '✓' : index + 1}</span>
             <span>{STEP_LABEL[step]}</span>
             {isCurrent && <span className="sr-only">지금 진행 중</span>}
           </li>

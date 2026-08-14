@@ -55,7 +55,7 @@ export default function SchedulePage() {
   }
 
   return (
-    <KioskLayout step="SCHEDULE" question="몇 시 버스를 타시나요?">
+    <KioskLayout step="SCHEDULE" question="출발 시간을 선택하세요">
       {!destination || !travelDate ? (
         <EmptyView message="목적지와 날짜를 먼저 선택해 주세요." />
       ) : isLoading ? (
@@ -65,7 +65,7 @@ export default function SchedulePage() {
       ) : schedules.length === 0 ? (
         <EmptyView message="선택할 수 있는 버스가 없습니다." />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-kiosk-body text-muted">
             {destination} · {travelDate}
           </p>
@@ -83,7 +83,7 @@ export default function SchedulePage() {
                 onClick={() => selectSchedule(schedule)}
                 disabled={isSoldOut || isSaving}
                 aria-pressed={isSelected}
-                className={`w-full rounded-2xl border-2 p-6 text-left transition-colors active:scale-[0.98] disabled:cursor-not-allowed ${
+                className={`w-full rounded-lg border p-5 text-left transition-colors active:scale-[0.98] disabled:cursor-not-allowed ${
                   isSoldOut
                     ? 'bg-surface-muted border-line text-muted opacity-60'
                     : isSelected

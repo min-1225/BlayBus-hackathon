@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router'
 import type { ReactNode } from 'react'
 import { StepIndicator } from './StepIndicator'
+import { BookingSummary } from './BookingSummary'
 import { useKioskSession } from '@/session/kioskSessionContext'
 import type { BookingStep } from '@/types/session'
 
@@ -30,43 +31,54 @@ export function KioskLayout({
   const { error, clearError } = useKioskSession()
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <header className="bg-surface border-line border-b px-8 py-5">
-        <StepIndicator current={step} />
-      </header>
-
-      <main className="mx-auto w-full max-w-3xl flex-1 px-8 py-10">
-        <h1 className="text-kiosk-title mb-8 font-bold">{question}</h1>
-
-        {error && (
-          <div
-            role="alert"
-            className="border-danger/30 bg-danger/5 text-kiosk-body text-danger mb-6 flex items-center justify-between gap-4 rounded-2xl border-2 p-5 font-bold"
-          >
-            <span>{error}</span>
-            <button
-              onClick={clearError}
-              className="text-kiosk-label underline"
-              aria-label="오류 메시지 닫기"
-            >
-              닫기
-            </button>
+    <div className="bg-surface-muted min-h-dvh">
+      <div className="mx-auto min-h-dvh max-w-7xl">
+        <header className="bg-surface border-line border-b px-6 py-5 lg:px-10">
+          <div className="mb-5 flex items-center justify-between">
+            <p className="text-kiosk-label text-brand-strong font-bold tracking-wide">
+              KIOBRIDGE BUS
+            </p>
+            <p className="text-kiosk-label text-muted">고속버스 예매</p>
           </div>
-        )}
+          <StepIndicator current={step} />
+        </header>
 
-        {children}
-      </main>
+        <main className="grid w-full gap-5 px-5 py-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:px-10 lg:py-8">
+          <section className="bg-surface border-line rounded-xl border p-6 lg:p-8">
+            <h1 className="text-kiosk-title mb-8 font-bold">{question}</h1>
 
-      {showHelp && (
-        <footer className="bg-surface border-line sticky bottom-0 border-t px-8 py-5">
-          <button
-            onClick={() => navigate('/kiosk/help')}
-            className="bg-warning text-kiosk-body h-touch text-ink w-full rounded-2xl font-bold active:scale-[0.98]"
-          >
-            잘 모르겠어요 · 도움받기
-          </button>
-        </footer>
-      )}
+            {error && (
+              <div
+                role="alert"
+                className="border-danger bg-danger/5 text-kiosk-body text-danger mb-6 flex items-center justify-between gap-4 rounded-lg border p-5 font-bold"
+              >
+                <span>{error}</span>
+                <button
+                  onClick={clearError}
+                  className="text-kiosk-label underline"
+                  aria-label="오류 메시지 닫기"
+                >
+                  닫기
+                </button>
+              </div>
+            )}
+
+            {children}
+
+            {showHelp && (
+              <footer className="border-line mt-8 border-t pt-6">
+                <button
+                  onClick={() => navigate('/kiosk/help')}
+                  className="bg-brand text-kiosk-body h-touch hover:bg-brand-strong w-full font-bold text-white transition-colors active:scale-[0.99]"
+                >
+                  직원 도움 요청
+                </button>
+              </footer>
+            )}
+          </section>
+          <BookingSummary />
+        </main>
+      </div>
     </div>
   )
 }

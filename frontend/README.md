@@ -26,11 +26,19 @@ Spring Boot 를 띄우지 않아도 모든 화면이 동작합니다.
 | ------------------ | ---------------------------------------------------------------- |
 | `npm run dev`      | 개발 서버 (5173)                                                 |
 | `npm run verify`   | **PR 올리기 전 반드시 실행** — typecheck + lint + format + build |
+| `npm run test:e2e` | Chromium에서 키오스크 → 직원 인계 → 완료 흐름을 자동 검증        |
 | `npm run format`   | Prettier 자동 정리                                               |
 | `npm run lint:fix` | ESLint 자동 수정                                                 |
 | `npm run build`    | 프로덕션 빌드                                                    |
 
 CI 가 `npm run verify` 와 같은 검사를 돌립니다. 로컬에서 통과시키고 PR 을 올리세요.
+
+최초 한 번만 Chromium을 설치한 뒤 E2E를 실행합니다.
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
 
 ---
 
