@@ -1,5 +1,9 @@
-import { useParams } from 'react-router'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import { StaffLayout } from './StaffLayout'
+import { claimSession, completeSession, updateSession } from '@/api/sessionApi'
+import { toUserMessage } from '@/api/http'
+import { BigButton } from '@/components/BigButton'
 import { ErrorView, LoadingView } from '@/components/StatusView'
 import { useSessionQuery } from '@/hooks/useSessionQuery'
 import { STEP_LABEL } from '@/types/session'
@@ -7,19 +11,63 @@ import { STEP_LABEL } from '@/types/session'
 /**
  * 이어받은 예매 상세 — 직원이 남은 항목을 채우는 화면.
  *
- * TODO(Frontend B):
- *   1. "이어받기" 버튼 → claimSession(id) 로 WAITING → CLAIMED
- *      성공 응답을 setSession 으로 그대로 반영하면 재조회가 필요 없다
- *      409 가 오면 setError 로 "이미 다른 직원이 이어받았습니다" 를 보여준다
- *   2. 좌석 등 미완료 항목 입력 → updateSession(id, patch) → setSession(응답)
- *   3. "예매 완료" → completeSession(id) 후 /staff/sessions/:id/complete 로 이동
- *
- * 조회 / 로딩 / 오류 / 재시도는 useSessionQuery 가 이미 처리한다.
- * 참고 구현: TransferLookupPage.tsx
+ * Claim 이후의 좌석 수정과 완료 처리는 별도 기능에서 추가한다.
  */
 export default function SessionDetailPage() {
+  const navigate = useNavigate()
   const { sessionId } = useParams()
-  const { session, error, isLoading, reload } = useSessionQuery(Number(sessionId))
+  const { session, setSession, error, setError, isLoading, reload } = useSessionQuery(
+    Number(sessionId),
+  )
+  const [isClaiming, setIsClaiming] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+
+  async function claim() {
+    if (!session || isClaiming) return
+
+    setIsClaiming(true)
+    setError(null)
+
+    try {
+      setSession(await claimSession(session.id))
+    } catch (caught) {
+      setError(toUserMessage(caught))
+    } finally {
+      setIsClaiming(false)
+    }
+  }
+
+  async function saveSeat(formData: FormData) {
+    if (!session) return
+    const seatNo = String(formData.get('seatNo') ?? '').trim()
+    if (!seatNo) {
+      setError('좌석 번호를 입력해 주세요.')
+      return
+    }
+    setIsSaving(true)
+    setError(null)
+    try {
+      setSession(await updateSession(session.id, { seatNo }))
+    } catch (caught) {
+      setError(toUserMessage(caught))
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function complete() {
+    if (!session || isSaving) return
+    setIsSaving(true)
+    setError(null)
+    try {
+      await completeSession(session.id)
+      navigate(`/staff/sessions/${session.id}/complete`)
+    } catch (caught) {
+      setError(toUserMessage(caught))
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -62,7 +110,37 @@ export default function SessionDetailPage() {
         </p>
       )}
 
-      <p className="text-muted">이어받기 · 수정 · 완료 버튼을 이 아래에 구현하세요.</p>
+      {session.status === 'WAITING' && (
+        <BigButton onClick={claim} disabled={isClaiming}>
+          {isClaiming ? '이어받는 중...' : '이 예매 이어받기'}
+        </BigButton>
+      )}
+
+      {session.status === 'CLAIMED' && (
+        <div className="space-y-4">
+          <form
+            action={saveSeat}
+            className="bg-surface border-line space-y-3 rounded-2xl border-2 p-5"
+          >
+            <label htmlFor="seat-no" className="block font-bold">
+              좌석 번호
+            </label>
+            <input
+              id="seat-no"
+              name="seatNo"
+              defaultValue={session.seatNo ?? ''}
+              inputMode="numeric"
+              className="border-line w-full rounded-xl border-2 px-4 py-3 text-xl font-bold"
+            />
+            <BigButton type="submit" variant="secondary" disabled={isSaving}>
+              좌석 저장
+            </BigButton>
+          </form>
+          <BigButton onClick={complete} disabled={isSaving || !session.seatNo}>
+            예매 완료 처리
+          </BigButton>
+        </div>
+      )}
     </StaffLayout>
   )
 }
