@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { StaffLayout } from './StaffLayout'
-import { claimSession } from '@/api/sessionApi'
+import { claimSession, completeSession, updateSession } from '@/api/sessionApi'
 import { toUserMessage } from '@/api/http'
 import { BigButton } from '@/components/BigButton'
 import { ErrorView, LoadingView } from '@/components/StatusView'
@@ -14,11 +14,13 @@ import { STEP_LABEL } from '@/types/session'
  * Claim 이후의 좌석 수정과 완료 처리는 별도 기능에서 추가한다.
  */
 export default function SessionDetailPage() {
+  const navigate = useNavigate()
   const { sessionId } = useParams()
   const { session, setSession, error, setError, isLoading, reload } = useSessionQuery(
     Number(sessionId),
   )
   const [isClaiming, setIsClaiming] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   async function claim() {
     if (!session || isClaiming) return
@@ -32,6 +34,38 @@ export default function SessionDetailPage() {
       setError(toUserMessage(caught))
     } finally {
       setIsClaiming(false)
+    }
+  }
+
+  async function saveSeat(formData: FormData) {
+    if (!session) return
+    const seatNo = String(formData.get('seatNo') ?? '').trim()
+    if (!seatNo) {
+      setError('좌석 번호를 입력해 주세요.')
+      return
+    }
+    setIsSaving(true)
+    setError(null)
+    try {
+      setSession(await updateSession(session.id, { seatNo }))
+    } catch (caught) {
+      setError(toUserMessage(caught))
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function complete() {
+    if (!session || isSaving) return
+    setIsSaving(true)
+    setError(null)
+    try {
+      await completeSession(session.id)
+      navigate(`/staff/sessions/${session.id}/complete`)
+    } catch (caught) {
+      setError(toUserMessage(caught))
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -83,9 +117,29 @@ export default function SessionDetailPage() {
       )}
 
       {session.status === 'CLAIMED' && (
-        <p className="bg-success/15 text-success rounded-2xl px-5 py-4 font-bold">
-          이 예매를 이어받았습니다. 좌석 수정과 완료 처리는 다음 단계에서 진행합니다.
-        </p>
+        <div className="space-y-4">
+          <form
+            action={saveSeat}
+            className="bg-surface border-line space-y-3 rounded-2xl border-2 p-5"
+          >
+            <label htmlFor="seat-no" className="block font-bold">
+              좌석 번호
+            </label>
+            <input
+              id="seat-no"
+              name="seatNo"
+              defaultValue={session.seatNo ?? ''}
+              inputMode="numeric"
+              className="border-line w-full rounded-xl border-2 px-4 py-3 text-xl font-bold"
+            />
+            <BigButton type="submit" variant="secondary" disabled={isSaving}>
+              좌석 저장
+            </BigButton>
+          </form>
+          <BigButton onClick={complete} disabled={isSaving || !session.seatNo}>
+            예매 완료 처리
+          </BigButton>
+        </div>
       )}
     </StaffLayout>
   )
