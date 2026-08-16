@@ -78,6 +78,22 @@ test('키오스크 예매를 직원이 이어받아 완료하면 키오스크가
     await expect(staffPage.getByRole('heading', { name: '예매 완료' })).toBeVisible()
     await expect(kioskPage.getByRole('heading', { name: '예매가 완료되었습니다' })).toBeVisible()
     await expect(kioskPage.getByText('7번', { exact: true }).first()).toBeVisible()
+
+    await expect
+      .poll(() => kioskPage.evaluate(() => sessionStorage.getItem('kiobridge:kiosk:sessionId')))
+      .toBeNull()
+
+    await kioskPage.goto('/')
+    await kioskPage.getByRole('link', { name: /버스표 예매/ }).click()
+    await expect(
+      kioskPage.getByRole('heading', { name: '출발지와 도착지를 선택하세요' }),
+    ).toBeVisible()
+    await expect(kioskPage.getByText('미선택', { exact: true })).toHaveCount(4)
+
+    await kioskPage.getByRole('button', { name: '속초' }).click()
+    await expect(kioskPage.getByRole('heading', { name: '출발 날짜를 선택하세요' })).toBeVisible()
+    await expect(kioskPage.getByText('속초', { exact: true })).toBeVisible()
+    await expect(kioskPage.getByRole('alert')).toHaveCount(0)
   } finally {
     await context.close()
   }

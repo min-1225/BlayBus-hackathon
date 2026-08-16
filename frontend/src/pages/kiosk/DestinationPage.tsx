@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { KioskLayout } from '@/components/KioskLayout'
 import { DESTINATIONS } from '@/mocks/data'
@@ -14,7 +15,11 @@ import { useKioskSession } from '@/session/kioskSessionContext'
  */
 export default function DestinationPage() {
   const navigate = useNavigate()
-  const { patch, isLoading } = useKioskSession()
+  const { session, patch, reset, isLoading } = useKioskSession()
+
+  useEffect(() => {
+    if (session && session.status !== 'ACTIVE') reset()
+  }, [reset, session])
 
   async function selectDestination(destination: string) {
     const updated = await patch({ destination, currentStep: 'DATE' })
