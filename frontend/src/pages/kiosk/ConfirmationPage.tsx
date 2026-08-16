@@ -23,7 +23,7 @@ export default function ConfirmationPage() {
 
   return (
     <KioskLayout step="CONFIRMATION" question="예매 내용을 확인하세요">
-      <dl className="bg-surface-muted border-line mb-8 divide-y rounded-xl border">
+      <dl className="bg-surface-muted border-line mb-8 divide-y rounded-lg border">
         <Row label="구간" value={`${session.departure} → ${session.destination}`} />
         <Row label="출발 일시" value={`${session.travelDate} ${session.departureTime}`} />
         <Row label="버스" value={session.busGrade === 'PREMIUM' ? '우등' : '일반'} />

@@ -17,6 +17,23 @@ test('메인에서 고객용을 선택해 결제 완료까지 진행한다', asy
   await expect(page.getByText('7번', { exact: true }).first()).toBeVisible()
 })
 
+test('좁은 화면에서도 날짜 선택 문구가 버튼 안에서 잘리지 않는다', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 })
+  await page.goto('/kiosk')
+  await page.getByRole('button', { name: '강릉' }).click()
+
+  const dateOptions = page.getByTestId('date-option')
+  await expect(dateOptions).toHaveCount(7)
+
+  const allFitInsideButtons = await dateOptions.evaluateAll((buttons) =>
+    buttons.every(
+      (button) =>
+        button.scrollHeight <= button.clientHeight && button.scrollWidth <= button.clientWidth,
+    ),
+  )
+  expect(allFitInsideButtons).toBe(true)
+})
+
 /**
  * TC-01 ~ TC-06을 하나의 사용자 여정으로 검증한다.
  * 같은 BrowserContext의 두 Page를 사용해야 localStorage와 BroadcastChannel을 공유한다.

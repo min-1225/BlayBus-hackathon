@@ -97,7 +97,7 @@ export default function SessionDetailPage() {
       title={`${session.departure} → ${session.destination ?? '미정'}`}
       subtitle={`현재 단계: ${STEP_LABEL[session.currentStep]} · 상태: ${session.status}`}
     >
-      <dl className="bg-surface border-line divide-line mb-6 divide-y rounded-2xl border-2">
+      <dl className="bg-surface border-line divide-line mb-6 divide-y rounded-lg border">
         <Row label="날짜" value={session.travelDate} />
         <Row label="시간" value={session.departureTime} />
         <Row label="버스" value={session.busGrade === 'PREMIUM' ? '우등' : '일반'} />
@@ -105,8 +105,8 @@ export default function SessionDetailPage() {
       </dl>
 
       {missing.length > 0 && (
-        <p className="bg-warning/15 text-kiosk-label mb-6 rounded-2xl px-5 py-4 font-bold">
-          미완료 항목: {missing.join(', ')}
+        <p className="bg-surface border-line text-kiosk-label mb-6 rounded-lg border px-5 py-4">
+          <strong>미완료 항목</strong> · {missing.join(', ')}
         </p>
       )}
 
@@ -120,7 +120,7 @@ export default function SessionDetailPage() {
         <div className="space-y-4">
           <form
             action={saveSeat}
-            className="bg-surface border-line space-y-3 rounded-2xl border-2 p-5"
+            className="bg-surface border-line space-y-3 rounded-lg border p-5"
           >
             <label htmlFor="seat-no" className="block font-bold">
               좌석 번호
@@ -130,7 +130,7 @@ export default function SessionDetailPage() {
               name="seatNo"
               defaultValue={session.seatNo ?? ''}
               inputMode="numeric"
-              className="border-line w-full rounded-xl border-2 px-4 py-3 text-xl font-bold"
+              className="border-line w-full rounded-lg border px-4 py-3 text-xl font-bold"
             />
             <BigButton type="submit" variant="secondary" disabled={isSaving}>
               좌석 저장

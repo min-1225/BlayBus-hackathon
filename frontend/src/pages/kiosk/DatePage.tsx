@@ -22,7 +22,8 @@ export default function DatePage() {
         {session?.destination ?? '목적지를 먼저 선택해 주세요'}행
       </p>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      {/* deslop-ignore-next-line 28 -- 날짜 선택지는 동일한 중요도의 실제 선택 목록이다. */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {dates.map((date) => {
           const isSelected = session?.travelDate === date.value
 
@@ -33,15 +34,16 @@ export default function DatePage() {
               onClick={() => selectDate(date.value)}
               disabled={isLoading || !session?.destination}
               aria-pressed={isSelected}
-              className={`h-touch rounded-lg border px-5 text-left font-bold transition-colors active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 ${
+              data-testid="date-option"
+              className={`min-h-touch rounded-lg border px-5 py-3 text-left font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                 isSelected
                   ? 'bg-brand border-brand text-white'
                   : 'bg-surface border-line hover:border-brand text-ink'
               }`}
             >
-              <span className="text-kiosk-body block">{date.label}</span>
+              <span className="text-kiosk-body block leading-tight">{date.label}</span>
               <span
-                className={`text-kiosk-label mt-1 block ${isSelected ? 'text-white/80' : 'text-muted'}`}
+                className={`text-kiosk-label mt-1 block whitespace-nowrap ${isSelected ? 'text-white/80' : 'text-muted'}`}
               >
                 {date.value}
               </span>

@@ -38,6 +38,7 @@ export default function DestinationPage() {
       </div>
 
       <p className="text-kiosk-label text-muted mb-4">도착지를 눌러 다음 단계로 이동합니다.</p>
+      {/* deslop-ignore-next-line 28 -- 목적지 선택지는 동일한 중요도의 실제 선택 목록이다. */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {DESTINATIONS.map((destination) => (
           <button
