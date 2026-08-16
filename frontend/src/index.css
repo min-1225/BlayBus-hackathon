@@ -1,111 +1,69 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import 'tailwindcss';
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/**
+ * KioBridge Assist 디자인 토큰
+ *
+ * 화면 코드에서 임의의 색/크기를 쓰지 말고 여기 정의된 토큰을 사용한다.
+ * 두 명의 Frontend 개발자가 같은 값을 쓰기 위한 팀 규약이다.
+ *
+ *   색   : bg-brand, text-brand, bg-surface, text-muted, bg-danger ...
+ *   글자 : text-kiosk-title, text-kiosk-body, text-kiosk-label
+ *   터치 : h-touch (키오스크 최소 터치 높이), h-touch-lg (주요 CTA)
+ */
+@theme {
+  /* Brand */
+  --color-brand: oklch(0.5 0.15 250);
+  --color-brand-strong: oklch(0.38 0.13 250);
+  --color-brand-soft: oklch(0.94 0.03 250);
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Semantic */
+  --color-surface: oklch(1 0 0);
+  --color-surface-muted: oklch(0.93 0.008 250);
+  --color-ink: oklch(0.19 0.008 245);
+  --color-muted: oklch(0.43 0.012 245);
+  --color-line: oklch(0.82 0.012 245);
+  --color-success: oklch(0.6 0.15 150);
+  --color-danger: oklch(0.58 0.2 25);
+  --color-warning: oklch(0.75 0.16 75);
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  /* Easy Mode Typography — 고령 사용자 기준으로 크게 */
+  --text-kiosk-title: 2.5rem;
+  --text-kiosk-title--line-height: 1.2;
+  --text-kiosk-body: 1.5rem;
+  --text-kiosk-body--line-height: 1.5;
+  --text-kiosk-label: 1.125rem;
+  --text-kiosk-label--line-height: 1.4;
+  --text-kiosk-code: 4.5rem;
+  --text-kiosk-code--line-height: 1.1;
+
+  /* Touch Target — 키오스크는 최소 80px, 주요 CTA 는 112px */
+  --spacing-touch: 5rem;
+  --spacing-touch-lg: 7rem;
+}
+
+@layer base {
+  html {
+    /* 키오스크는 확대/축소를 막고, 폰트만 크게 간다 */
+    -webkit-text-size-adjust: 100%;
   }
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  body {
+    @apply text-ink bg-surface-muted antialiased;
+    font-family:
+      'Pretendard',
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      'Malgun Gothic',
+      sans-serif;
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  button {
+    border-radius: 0.5rem;
   }
-}
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+  /* 키보드 포커스는 항상 보이게 — 접근성 SHOULD 항목 */
+  :focus-visible {
+    @apply outline-brand outline-4 outline-offset-2;
   }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }

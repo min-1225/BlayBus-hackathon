@@ -1,45 +1,49 @@
 # FRONTEND GUIDE
 
+> 실제 코드 기준 사용법은 [`frontend/README.md`](../frontend/README.md) 를 보세요.
+> 이 문서는 화면 설계 기준을 다룹니다.
+
 ## 1. Route
 
-```text
-/kiosk
-/staff
-```
+| 경로 | 화면 |
+|---|---|
+| `/kiosk` | 목적지 선택 |
+| `/kiosk/date` | 날짜 선택 |
+| `/kiosk/schedule` | 시간 / 버스 등급 |
+| `/kiosk/seat` | 좌석 선택 |
+| `/kiosk/help` | 도움받기 (지금까지 선택 요약) |
+| `/kiosk/transfer` | 6자리 코드 안내 + 완료 대기 |
+| `/kiosk/complete` | 예매 완료 |
+| `/staff` | 이어하기 번호 조회 |
+| `/staff/sessions/:sessionId` | 예매 상세 / 이어받기 / 수정 |
+| `/staff/sessions/:sessionId/complete` | 완료 확인 |
 
 React App 하나에서 관리합니다.
 
 ---
 
-## 2. 권장 구조
+## 2. 구조 (확정)
 
 ```text
 src/
-├── pages/
-│   ├── kiosk/
-│   │   ├── DestinationPage
-│   │   ├── DatePage
-│   │   ├── SchedulePage
-│   │   ├── SeatPage
-│   │   ├── HelpPage
-│   │   ├── TransferPage
-│   │   └── CompletePage
-│   │
-│   └── staff/
-│       ├── TransferLookupPage
-│       ├── SessionDetailPage
-│       └── StaffCompletePage
-│
-├── components/
-├── api/
-│   ├── sessionApi
-│   └── websocket
-├── types/
-├── mocks/
-└── router/
+├── api/            REST / WebSocket. URL 문자열은 여기에만 존재한다
+├── components/     BigButton, KioskLayout, StepIndicator, StatusView
+├── config/env.ts   환경변수를 읽는 유일한 지점
+├── hooks/          useSessionQuery 등 공용 Hook
+├── mocks/          MSW 가짜 Backend
+├── pages/kiosk|staff/
+├── router/
+├── session/        Kiosk 예매 상태 (Context + useReducer)
+└── types/          API Contract 와 1:1 대응
 ```
 
-파일 확장자와 세부 naming은 팀에서 통일합니다.
+기술 선택 근거는 [`TECH_STACK.md`](TECH_STACK.md) 를 보세요.
+
+Import 는 `@/` 절대경로를 씁니다.
+
+```ts
+import { BigButton } from '@/components/BigButton'
+```
 
 ---
 
@@ -65,37 +69,36 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 ## 4. Backend 대기 금지
 
-Backend가 준비되지 않았으면 Mock으로 개발합니다.
+MSW 가 `API_CONTRACT.md` 를 그대로 구현한 가짜 Backend 역할을 합니다.
+`src/mocks/handlers.ts` 에 상태 전이와 404/409 오류까지 들어 있습니다.
 
-```text
-src/mocks/
-  session.ts
-  schedules.ts
+```env
+VITE_USE_MOCK=true    # Backend 없이 개발
+VITE_USE_MOCK=false   # 실제 Backend
 ```
 
-Mock JSON은 `API_CONTRACT.md`와 동일한 구조를 사용합니다.
+화면 코드는 두 모드에서 동일합니다. 연동 시 고칠 코드가 없습니다.
 
-그래야 실제 API 교체 시 화면 코드를 거의 수정하지 않습니다.
+Contract 가 바뀌면 `handlers.ts` 도 같이 고쳐야 합니다.
+그러지 않으면 Frontend 가 틀린 가정 위에서 계속 개발하게 됩니다.
 
 ---
 
 ## 5. Kiosk 상태
 
-Kiosk 화면에서 최소 보관:
+`useKioskSession()` 하나로 다룹니다. 화면이 `sessionId` 나 `fetch` 를 직접 만지지 않습니다.
 
-```text
-sessionId
-departure
-destination
-travelDate
-departureTime
-busGrade
-seatNo
-currentStep
-status
+```ts
+const { session, patch, isLoading, error } = useKioskSession()
+
+const updated = await patch({ destination: '강릉', currentStep: 'DATE' })
+if (updated) navigate('/kiosk/date')   // 실패하면 null — 넘어가지 않는다
 ```
 
-Session 생성 후 `sessionId`를 반드시 기억해야 WebSocket Topic을 구독할 수 있습니다.
+`patch` 는 서버 저장(PATCH)과 로컬 상태 갱신을 한 번에 처리합니다.
+세션이 아직 없으면 자동으로 생성하므로 화면에서 순서를 신경 쓰지 않아도 됩니다.
+
+`sessionId` 는 `sessionStorage` 에 저장되어 새로고침해도 진행 상황이 유지됩니다.
 
 ---
 
@@ -196,32 +199,39 @@ Session 생성 후 `sessionId`를 반드시 기억해야 WebSocket Topic을 구�
 
 ## 9. WebSocket 연결
 
-Kiosk:
+`api/websocket.ts` 의 `subscribeSession` 하나만 씁니다.
+Mock 모드(BroadcastChannel)와 실서버(STOMP)를 알아서 갈라주므로 호출부는 동일합니다.
 
-```text
-Session 생성
- ↓
-sessionId 획득
- ↓
-STOMP 연결
- ↓
-/topic/sessions/{sessionId} 구독
+```ts
+useEffect(() => {
+  if (!sessionId) return
+  return subscribeSession(sessionId, (event) => {
+    if (event.type === 'SESSION_COMPLETED') {
+      void refresh().then(() => navigate('/kiosk/complete'))
+    }
+  })
+}, [sessionId, refresh, navigate])
 ```
 
-`SESSION_COMPLETED` 수신:
+지켜야 할 두 가지:
 
-- 완료 화면으로 이동
-- 또는 최신 Session GET 후 완료 화면 표시
+1. 반환값은 **구독 해제 함수**입니다. `useEffect` 에서 그대로 return 하세요.
+   안 하면 화면 이동 때마다 연결이 쌓입니다.
+2. 이벤트는 "무언가 바뀌었다"는 신호일 뿐입니다.
+   **데이터는 이벤트가 아니라 `refresh()` 로 다시 읽습니다.**
+
+참고 구현: `pages/kiosk/TransferPage.tsx`
 
 ---
 
 ## 10. Frontend PR 최소 기준
 
-- 페이지 직접 접속 가능
-- Console Error 없음
-- Mock 또는 실제 API로 정상 동작
-- 빈 상태 처리
-- Loading 처리
-- Error 처리
-- 모바일 Staff UI 확인
-- API URL 하드코딩 없음
+```text
+[ ] npm run verify 통과 (typecheck + lint + format + build)
+[ ] 주소 직접 입력으로 페이지 접속 가능
+[ ] Console Error 없음
+[ ] Loading / Error / Empty 처리
+[ ] API URL 하드코딩 없음
+[ ] 임의의 색·크기 값 대신 index.css 토큰 사용
+[ ] Staff 화면은 모바일 폭(375px)에서 확인
+```

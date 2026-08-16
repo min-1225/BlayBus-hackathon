@@ -18,17 +18,34 @@
 ## Frontend Skeleton
 
 ```text
-[ ] React App 생성
-[ ] TypeScript 여부 확정
-[ ] Router 설치
-[ ] /kiosk route
-[ ] /staff route
-[ ] api 폴더
-[ ] types 폴더
-[ ] mocks 폴더
-[ ] .env.example
-[ ] npm run dev 성공
-[ ] npm run build 성공
+[x] React App 생성
+[x] TypeScript 여부 확정
+[x] Router 설치
+[x] /kiosk route (전체 7개 화면)
+[x] /staff route (전체 3개 화면)
+[x] api 폴더 (http / sessionApi / websocket)
+[x] types 폴더 (Contract 와 1:1)
+[x] mocks 폴더 (MSW 가짜 Backend)
+[x] .env.example
+[x] npm run dev 성공
+[x] npm run build 성공
+```
+
+## Frontend Pipeline
+
+```text
+[x] Styling 확정 — Tailwind CSS 4 + Easy Mode 토큰
+[x] Mock 전략 확정 — MSW, VITE_USE_MOCK 로 전환
+[x] 상태 관리 확정 — Context + useReducer (useKioskSession)
+[x] Path Alias (@/)
+[x] Vite Proxy — 로컬 CORS 불필요
+[x] 공용 컴포넌트 — BigButton / KioskLayout / StepIndicator / StatusView
+[x] 오류 문구 한국어 매핑 (api/http.ts)
+[x] Prettier + ESLint
+[x] npm run verify (typecheck + lint + format + build)
+[x] Frontend CI 가 verify 와 동일 검사 수행
+[x] 참고 구현 3개 — DestinationPage / TransferPage / TransferLookupPage
+[ ] 팀원 각자 npm install + .env.local 생성 확인
 ```
 
 ## Backend Skeleton
