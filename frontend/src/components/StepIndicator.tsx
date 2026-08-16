@@ -12,6 +12,7 @@ export function StepIndicator({ current }: { current: BookingStep }) {
   const currentIndex = STEP_SEQUENCE.indexOf(current)
 
   return (
+    // deslop-ignore-next-line 28 -- 실제 예매 순서를 나타내는 단계 목록이다.
     <ol className="grid grid-cols-3 gap-2 lg:grid-cols-6" aria-label="예매 진행 단계">
       {STEP_SEQUENCE.map((step, index) => {
         const isDone = currentIndex > index
@@ -24,7 +25,7 @@ export function StepIndicator({ current }: { current: BookingStep }) {
             className={[
               'text-kiosk-label border-line flex min-h-12 items-center justify-center gap-2 rounded-lg border px-3 py-2 font-semibold',
               isCurrent && 'border-brand bg-brand-soft text-brand-strong',
-              isDone && 'border-success bg-success/10 text-ink',
+              isDone && 'border-line bg-surface text-brand-strong',
               !isCurrent && !isDone && 'bg-surface-muted text-muted',
             ]
               .filter(Boolean)

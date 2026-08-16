@@ -23,6 +23,8 @@ export interface KioskSessionValue {
   patch: (patch: SessionPatch) => Promise<Session | null>
   /** 도움받기 — 6자리 코드를 발급받는다. */
   requestTransfer: () => Promise<TransferResponse | null>
+  /** 고객 결제 완료 — 선택한 예매를 최종 완료한다. */
+  completeBooking: () => Promise<Session | null>
   /** 서버에서 최신 세션을 다시 읽는다. WebSocket 이벤트 수신 시 사용한다. */
   refresh: () => Promise<Session | null>
   /** 처음부터 다시 — 데모를 반복 실행할 때 사용한다. */

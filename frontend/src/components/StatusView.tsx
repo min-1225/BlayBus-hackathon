@@ -10,6 +10,7 @@ import type { ReactNode } from 'react'
 export function LoadingView({ message = '불러오는 중입니다' }: { message?: string }) {
   return (
     <div className="flex flex-col items-center gap-4 py-16" role="status" aria-live="polite">
+      {/* deslop-ignore-next-line 19 -- 회전 진행 표시에는 원형이 기능적으로 필요하다. */}
       <span className="border-line border-t-brand size-12 animate-spin rounded-full border-4" />
       <p className="text-kiosk-body text-muted">{message}</p>
     </div>
@@ -27,10 +28,12 @@ export function ErrorView({
 }) {
   return (
     <div
-      className="border-danger/30 bg-danger/5 flex flex-col items-start gap-4 rounded-2xl border-2 p-6"
+      className="bg-surface border-line flex flex-col items-start gap-4 rounded-lg border p-6"
       role="alert"
     >
-      <p className="text-kiosk-body text-danger font-bold">{message}</p>
+      <p className="text-kiosk-body text-ink">
+        <strong className="text-danger">오류</strong> · {message}
+      </p>
       {onRetry && (
         <button
           onClick={onRetry}
@@ -46,7 +49,7 @@ export function ErrorView({
 
 export function EmptyView({ message }: { message: string }) {
   return (
-    <div className="border-line rounded-2xl border-2 border-dashed py-16 text-center">
+    <div className="border-line rounded-lg border border-dashed py-16 text-center">
       <p className="text-kiosk-body text-muted">{message}</p>
     </div>
   )

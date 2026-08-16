@@ -19,7 +19,7 @@ export default function StaffCompletePage() {
 
       <Link
         to="/staff"
-        className="bg-brand hover:bg-brand-strong inline-block rounded-2xl px-6 py-4 font-bold text-white transition-colors"
+        className="bg-brand hover:bg-brand-strong inline-block rounded-lg px-6 py-4 font-bold text-white transition-colors"
       >
         다음 고객 응대
       </Link>

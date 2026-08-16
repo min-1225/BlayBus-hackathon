@@ -44,15 +44,17 @@ export function KioskLayout({
         </header>
 
         <main className="grid w-full gap-5 px-5 py-6 lg:grid-cols-[minmax(0,1fr)_21rem] lg:px-10 lg:py-8">
-          <section className="bg-surface border-line rounded-xl border p-6 lg:p-8">
-            <h1 className="text-kiosk-title mb-8 font-bold">{question}</h1>
+          <section className="bg-surface border-line rounded-lg border p-6 lg:p-8">
+            <h1 className="text-kiosk-title mb-8 font-bold break-keep">{question}</h1>
 
             {error && (
               <div
                 role="alert"
-                className="border-danger bg-danger/5 text-kiosk-body text-danger mb-6 flex items-center justify-between gap-4 rounded-lg border p-5 font-bold"
+                className="bg-surface border-line text-kiosk-body text-ink mb-6 flex items-center justify-between gap-4 rounded-lg border p-5"
               >
-                <span>{error}</span>
+                <span>
+                  <strong className="text-danger">오류</strong> · {error}
+                </span>
                 <button
                   onClick={clearError}
                   className="text-kiosk-label underline"

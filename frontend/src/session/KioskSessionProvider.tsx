@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useReducer, type ReactNode } from 'react'
 import { toUserMessage } from '@/api/http'
-import { createSession, createTransfer, getSession, updateSession } from '@/api/sessionApi'
+import {
+  completeSession,
+  createSession,
+  createTransfer,
+  getSession,
+  updateSession,
+} from '@/api/sessionApi'
 import { KIOSK_DEPARTURE } from '@/config/env'
 import { KioskSessionContext, type KioskSessionValue } from './kioskSessionContext'
 import type { Session, SessionPatch, TransferResponse } from '@/types/session'
@@ -14,6 +20,15 @@ import type { Session, SessionPatch, TransferResponse } from '@/types/session'
 
 /** 새로고침해도 진행 상황을 잃지 않도록 sessionId 를 저장해 둔다. */
 const SESSION_ID_KEY = 'kiobridge:kiosk:sessionId'
+
+function persistResumableSession(session: Session) {
+  if (session.status === 'COMPLETED') {
+    sessionStorage.removeItem(SESSION_ID_KEY)
+    return
+  }
+
+  sessionStorage.setItem(SESSION_ID_KEY, String(session.id))
+}
 
 interface State {
   session: Session | null
@@ -61,7 +76,15 @@ export function KioskSessionProvider({ children }: { children: ReactNode }) {
 
     getSession(Number(savedId))
       .then((session) => {
-        if (!cancelled) dispatch({ type: 'REQUEST_SUCCESS', session })
+        if (cancelled) return
+
+        if (session.status === 'COMPLETED') {
+          sessionStorage.removeItem(SESSION_ID_KEY)
+          dispatch({ type: 'REQUEST_DONE' })
+          return
+        }
+
+        dispatch({ type: 'REQUEST_SUCCESS', session })
       })
       .catch(() => {
         // 서버에 없는 세션이면 조용히 버린다. 사용자에게 보여줄 오류가 아니다.
@@ -87,7 +110,7 @@ export function KioskSessionProvider({ children }: { children: ReactNode }) {
         const session = extractSession(result)
 
         if (session) {
-          sessionStorage.setItem(SESSION_ID_KEY, String(session.id))
+          persistResumableSession(session)
           dispatch({ type: 'REQUEST_SUCCESS', session })
         } else {
           dispatch({ type: 'REQUEST_DONE' })
@@ -103,7 +126,7 @@ export function KioskSessionProvider({ children }: { children: ReactNode }) {
   )
 
   const start = useCallback(async () => {
-    if (state.session) return state.session
+    if (state.session?.status === 'ACTIVE') return state.session
     return run(
       () => createSession(KIOSK_DEPARTURE),
       (s) => s,
@@ -114,7 +137,7 @@ export function KioskSessionProvider({ children }: { children: ReactNode }) {
     async (patchBody: SessionPatch) => {
       // 세션이 아직 없으면 먼저 만든다. 화면에서 순서를 신경 쓰지 않아도 되게 한다.
       const current =
-        state.session ??
+        (state.session?.status === 'ACTIVE' ? state.session : null) ??
         (await run(
           () => createSession(KIOSK_DEPARTURE),
           (s) => s,
@@ -156,6 +179,15 @@ export function KioskSessionProvider({ children }: { children: ReactNode }) {
     )
   }, [run, state.session])
 
+  const completeBooking = useCallback(async () => {
+    const current = state.session
+    if (!current) return null
+    return run(
+      () => completeSession(current.id),
+      (session) => session,
+    )
+  }, [run, state.session])
+
   const reset = useCallback(() => {
     sessionStorage.removeItem(SESSION_ID_KEY)
     dispatch({ type: 'RESET' })
@@ -171,11 +203,12 @@ export function KioskSessionProvider({ children }: { children: ReactNode }) {
       start,
       patch,
       requestTransfer,
+      completeBooking,
       refresh,
       reset,
       clearError,
     }),
-    [state, start, patch, requestTransfer, refresh, reset, clearError],
+    [state, start, patch, requestTransfer, completeBooking, refresh, reset, clearError],
   )
 
   return <KioskSessionContext value={value}>{children}</KioskSessionContext>

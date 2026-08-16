@@ -21,7 +21,7 @@ export function BookingSummary() {
     .join(' ')
 
   return (
-    <aside className="bg-surface border-line h-fit rounded-xl border p-6 lg:sticky lg:top-6">
+    <aside className="bg-surface border-line h-fit rounded-lg border p-6 lg:sticky lg:top-6">
       <h2 className="text-kiosk-body mb-6 font-bold">예매 요약</h2>
       <dl className="text-kiosk-label divide-line divide-y">
         <SummaryRow label="출발" value={session?.departure ?? '동서울'} />
