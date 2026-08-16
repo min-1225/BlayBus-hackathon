@@ -1,9 +1,12 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
+import { BrowserRouter, Route, Routes } from 'react-router'
+import HomePage from '@/pages/HomePage'
 import { KioskSessionProvider } from '@/session/KioskSessionProvider'
 import DestinationPage from '@/pages/kiosk/DestinationPage'
 import DatePage from '@/pages/kiosk/DatePage'
 import SchedulePage from '@/pages/kiosk/SchedulePage'
 import SeatPage from '@/pages/kiosk/SeatPage'
+import ConfirmationPage from '@/pages/kiosk/ConfirmationPage'
+import PaymentPage from '@/pages/kiosk/PaymentPage'
 import HelpPage from '@/pages/kiosk/HelpPage'
 import TransferPage from '@/pages/kiosk/TransferPage'
 import KioskCompletePage from '@/pages/kiosk/KioskCompletePage'
@@ -25,7 +28,7 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/kiosk" replace />} />
+        <Route path="/" element={<HomePage />} />
 
         <Route
           path="/kiosk/*"
@@ -36,6 +39,8 @@ export default function AppRouter() {
                 <Route path="date" element={<DatePage />} />
                 <Route path="schedule" element={<SchedulePage />} />
                 <Route path="seat" element={<SeatPage />} />
+                <Route path="confirm" element={<ConfirmationPage />} />
+                <Route path="payment" element={<PaymentPage />} />
                 <Route path="help" element={<HelpPage />} />
                 <Route path="transfer" element={<TransferPage />} />
                 <Route path="complete" element={<KioskCompletePage />} />

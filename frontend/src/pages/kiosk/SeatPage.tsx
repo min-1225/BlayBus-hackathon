@@ -8,12 +8,13 @@ import type { BusGrade } from '@/types/session'
  * 좌석 선택 — 데모에서 사용자가 "막히는" 지점.
  */
 export default function SeatPage() {
+  const navigate = useNavigate()
   const { session, patch, isLoading } = useKioskSession()
   const busGrade = session?.busGrade
 
   async function selectSeat(seatNo: string) {
     const updated = await patch({ seatNo, currentStep: 'CONFIRMATION' })
-    if (!updated) return
+    if (updated) navigate('/kiosk/confirm')
   }
 
   return (
@@ -102,3 +103,4 @@ function SeatGrid({
     </div>
   )
 }
+import { useNavigate } from 'react-router'

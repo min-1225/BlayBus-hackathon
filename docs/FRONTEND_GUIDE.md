@@ -7,10 +7,13 @@
 
 | 경로 | 화면 |
 |---|---|
+| `/` | 고객용 / 직원용 선택 |
 | `/kiosk` | 목적지 선택 |
 | `/kiosk/date` | 날짜 선택 |
 | `/kiosk/schedule` | 시간 / 버스 등급 |
 | `/kiosk/seat` | 좌석 선택 |
+| `/kiosk/confirm` | 예매 내용 최종 확인 |
+| `/kiosk/payment` | 결제 수단 선택 / 결제 완료 |
 | `/kiosk/help` | 도움받기 (지금까지 선택 요약) |
 | `/kiosk/transfer` | 6자리 코드 안내 + 완료 대기 |
 | `/kiosk/complete` | 예매 완료 |
