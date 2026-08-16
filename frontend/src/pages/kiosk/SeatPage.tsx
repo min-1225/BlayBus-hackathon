@@ -62,7 +62,7 @@ function SeatGrid({
   const layout = seatLayout(busGrade)
 
   return (
-    <div className="bg-surface-muted border-line rounded-xl border p-5 sm:p-8">
+    <div className="bg-surface-muted border-line rounded-lg border p-5 sm:p-8">
       <div className="text-kiosk-label text-muted mb-6 text-center">전면 (운전석)</div>
       <div className="space-y-3">
         {Array.from({ length: layout.rows }, (_, rowIndex) => (

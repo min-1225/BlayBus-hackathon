@@ -53,14 +53,14 @@ export default function TransferLookupPage() {
             value={code}
             onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
             placeholder="000000"
-            className="border-line focus:border-brand w-full rounded-2xl border-2 px-5 py-4 text-center text-4xl font-bold tracking-[0.3em] tabular-nums outline-none"
+            className="border-line focus:border-brand w-full rounded-lg border px-5 py-4 text-center text-4xl font-bold tracking-[0.3em] tabular-nums outline-none"
           />
         </div>
 
         <button
           type="submit"
           disabled={code.length !== 6 || isLoading}
-          className="bg-brand hover:bg-brand-strong w-full rounded-2xl py-4 text-xl font-bold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+          className="bg-brand hover:bg-brand-strong w-full rounded-lg py-4 text-xl font-bold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         >
           {isLoading ? '조회하는 중...' : '예매 불러오기'}
         </button>

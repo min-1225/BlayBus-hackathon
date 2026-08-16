@@ -36,6 +36,7 @@ export default function PaymentPage() {
 
   return (
     <KioskLayout step="PAYMENT" question="결제 수단을 선택하세요">
+      {/* deslop-ignore-next-line 28 -- 결제수단 선택지는 동일한 중요도의 실제 선택 목록이다. */}
       <div className="grid gap-3 sm:grid-cols-3">
         {PAYMENT_METHODS.map((paymentMethod) => (
           <button

@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 export default function HomePage() {
   return (
     <div className="bg-surface-muted min-h-dvh px-5 py-10">
-      <main className="bg-surface border-line mx-auto max-w-5xl rounded-xl border p-7 lg:p-12">
+      <main className="bg-surface border-line mx-auto max-w-5xl rounded-lg border p-7 lg:p-12">
         <header className="border-line mb-10 border-b pb-6">
           <p className="text-kiosk-label text-brand-strong font-bold tracking-wide">
             KIOBRIDGE BUS
@@ -17,7 +17,7 @@ export default function HomePage() {
         <div className="grid gap-5 md:grid-cols-2">
           <Link
             to="/kiosk"
-            className="border-brand bg-brand-soft hover:bg-brand flex min-h-64 flex-col justify-between rounded-xl border-2 p-8 transition-colors hover:text-white"
+            className="border-brand bg-brand hover:bg-brand-strong flex min-h-64 flex-col justify-between rounded-lg border p-8 text-white transition-colors"
           >
             <span className="text-kiosk-label font-bold">고객용</span>
             <span>
@@ -29,7 +29,7 @@ export default function HomePage() {
 
           <Link
             to="/staff"
-            className="bg-surface border-line hover:border-brand flex min-h-64 flex-col justify-between rounded-xl border-2 p-8 transition-colors"
+            className="bg-surface border-line hover:border-brand flex min-h-64 flex-col justify-between rounded-lg border p-8 transition-colors"
           >
             <span className="text-kiosk-label text-muted font-bold">직원용</span>
             <span>
