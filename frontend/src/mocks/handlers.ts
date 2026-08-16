@@ -154,14 +154,14 @@ export const handlers = [
     return HttpResponse.json(saved)
   }),
 
-  /** POST /api/v1/sessions/{sessionId}/complete — CLAIMED → COMPLETED */
+  /** POST /api/v1/sessions/{sessionId}/complete — 고객 직접 완료 또는 직원 완료 */
   http.post('/api/v1/sessions/:sessionId/complete', async ({ params }) => {
     await delay(LATENCY_MS)
     const session = findSession(Number(params.sessionId))
     if (!session) return notFound()
 
-    if (session.status !== 'CLAIMED') {
-      return errorResponse(409, 'INVALID_SESSION_STATUS', '이어받기 후에만 완료할 수 있습니다.')
+    if (session.status !== 'ACTIVE' && session.status !== 'CLAIMED') {
+      return errorResponse(409, 'INVALID_SESSION_STATUS', '완료할 수 있는 상태가 아닙니다.')
     }
 
     if (!session.seatNo) {

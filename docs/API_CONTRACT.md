@@ -294,7 +294,8 @@ POST /api/v1/sessions/{sessionId}/complete
 동작:
 
 ```text
-CLAIMED → COMPLETED
+ACTIVE → COMPLETED (고객 직접 결제 완료)
+CLAIMED → COMPLETED (직원 인계 완료)
 ```
 
 Response:

@@ -193,6 +193,18 @@ class SessionApiIntegrationTest {
                 .andExpect(jsonPath("$.seatNo").value("7"));
     }
 
+    @Test
+    void customerCanCompleteActiveSessionAfterSelectingSeat() throws Exception {
+        long id = createSession();
+        patchSeat(id, "7");
+
+        mvc().perform(post("/api/v1/sessions/" + id + "/complete"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("COMPLETED"))
+                .andExpect(jsonPath("$.currentStep").value("COMPLETED"))
+                .andExpect(jsonPath("$.seatNo").value("7"));
+    }
+
     // ------- 12. COMPLETED 세션 수정 차단 -------
     @Test
     void patch_onCompletedSessionIsBlocked() throws Exception {

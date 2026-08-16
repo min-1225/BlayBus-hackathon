@@ -78,16 +78,19 @@ import { BigButton } from '@/components/BigButton'
 
 | 경로                           | 파일                                 | 상태                              |
 | ------------------------------ | ------------------------------------ | --------------------------------- |
-| `/kiosk`                       | `pages/kiosk/DestinationPage.tsx`    | ✅ 완성 (**참고 구현**)           |
-| `/kiosk/date`                  | `pages/kiosk/DatePage.tsx`           | TODO                              |
-| `/kiosk/schedule`              | `pages/kiosk/SchedulePage.tsx`       | TODO                              |
-| `/kiosk/seat`                  | `pages/kiosk/SeatPage.tsx`           | TODO                              |
+| `/`                            | `pages/HomePage.tsx`                 | ✅ 고객용 / 직원용 선택           |
+| `/kiosk`                       | `pages/kiosk/DestinationPage.tsx`    | ✅ 완성                           |
+| `/kiosk/date`                  | `pages/kiosk/DatePage.tsx`           | ✅ 완성                           |
+| `/kiosk/schedule`              | `pages/kiosk/SchedulePage.tsx`       | ✅ 완성                           |
+| `/kiosk/seat`                  | `pages/kiosk/SeatPage.tsx`           | ✅ 완성                           |
+| `/kiosk/confirm`               | `pages/kiosk/ConfirmationPage.tsx`   | ✅ 완성                           |
+| `/kiosk/payment`               | `pages/kiosk/PaymentPage.tsx`        | ✅ 완성                           |
 | `/kiosk/help`                  | `pages/kiosk/HelpPage.tsx`           | ✅ 완성                           |
 | `/kiosk/transfer`              | `pages/kiosk/TransferPage.tsx`       | ✅ 완성 (**WebSocket 참고 구현**) |
-| `/kiosk/complete`              | `pages/kiosk/KioskCompletePage.tsx`  | 최소 구현                         |
+| `/kiosk/complete`              | `pages/kiosk/KioskCompletePage.tsx`  | ✅ 완성                           |
 | `/staff`                       | `pages/staff/TransferLookupPage.tsx` | ✅ 완성 (**참고 구현**)           |
-| `/staff/sessions/:id`          | `pages/staff/SessionDetailPage.tsx`  | TODO — claim/update/complete      |
-| `/staff/sessions/:id/complete` | `pages/staff/StaffCompletePage.tsx`  | 최소 구현                         |
+| `/staff/sessions/:id`          | `pages/staff/SessionDetailPage.tsx`  | ✅ Claim / 수정 / 완료            |
+| `/staff/sessions/:id/complete` | `pages/staff/StaffCompletePage.tsx`  | ✅ 완성                           |
 
 새 화면을 만들 때는 **DestinationPage.tsx 를 먼저 읽고** 같은 패턴으로 작성하세요.
 

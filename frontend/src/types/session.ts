@@ -69,7 +69,7 @@ export const STEP_LABEL: Record<BookingStep, string> = {
   DATE: '날짜',
   SCHEDULE: '시간',
   SEAT_SELECTION: '좌석',
-  CONFIRMATION: '직원 도움',
-  PAYMENT: '완료 대기',
+  CONFIRMATION: '예매 확인',
+  PAYMENT: '결제',
   COMPLETED: '완료',
 }

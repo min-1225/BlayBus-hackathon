@@ -146,12 +146,13 @@ public class SessionService {
         return session;
     }
 
-    /** CLAIMED → COMPLETED. 좌석이 지정되지 않았으면 완료할 수 없다. */
+    /** ACTIVE 또는 CLAIMED → COMPLETED. 좌석이 지정되지 않았으면 완료할 수 없다. */
     @Transactional
     public OrderSession complete(Long sessionId) {
         OrderSession session = get(sessionId);
 
-        if (session.getStatus() != SessionStatus.CLAIMED) {
+        if (session.getStatus() != SessionStatus.ACTIVE
+                && session.getStatus() != SessionStatus.CLAIMED) {
             throw new ApiException(ErrorCode.INVALID_SESSION_STATUS, "완료할 수 있는 상태가 아닙니다.");
         }
 

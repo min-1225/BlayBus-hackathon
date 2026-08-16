@@ -66,7 +66,7 @@ public class SessionController {
         return SessionResponse.from(sessionService.claim(sessionId));
     }
 
-    /** POST /api/v1/sessions/{sessionId}/complete — 직원 완료(CLAIMED → COMPLETED). */
+    /** POST /api/v1/sessions/{sessionId}/complete — 고객 직접 완료 또는 직원 완료. */
     @PostMapping("/sessions/{sessionId}/complete")
     public SessionResponse complete(@PathVariable Long sessionId) {
         return SessionResponse.from(sessionService.complete(sessionId));

@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useReducer, type ReactNode } from 'react'
 import { toUserMessage } from '@/api/http'
-import { createSession, createTransfer, getSession, updateSession } from '@/api/sessionApi'
+import {
+  completeSession,
+  createSession,
+  createTransfer,
+  getSession,
+  updateSession,
+} from '@/api/sessionApi'
 import { KIOSK_DEPARTURE } from '@/config/env'
 import { KioskSessionContext, type KioskSessionValue } from './kioskSessionContext'
 import type { Session, SessionPatch, TransferResponse } from '@/types/session'
@@ -156,6 +162,15 @@ export function KioskSessionProvider({ children }: { children: ReactNode }) {
     )
   }, [run, state.session])
 
+  const completeBooking = useCallback(async () => {
+    const current = state.session
+    if (!current) return null
+    return run(
+      () => completeSession(current.id),
+      (session) => session,
+    )
+  }, [run, state.session])
+
   const reset = useCallback(() => {
     sessionStorage.removeItem(SESSION_ID_KEY)
     dispatch({ type: 'RESET' })
@@ -171,11 +186,12 @@ export function KioskSessionProvider({ children }: { children: ReactNode }) {
       start,
       patch,
       requestTransfer,
+      completeBooking,
       refresh,
       reset,
       clearError,
     }),
-    [state, start, patch, requestTransfer, refresh, reset, clearError],
+    [state, start, patch, requestTransfer, completeBooking, refresh, reset, clearError],
   )
 
   return <KioskSessionContext value={value}>{children}</KioskSessionContext>

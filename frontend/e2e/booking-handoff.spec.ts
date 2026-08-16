@@ -1,5 +1,22 @@
 import { expect, test } from '@playwright/test'
 
+test('메인에서 고객용을 선택해 결제 완료까지 진행한다', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('link', { name: /버스표 예매/ }).click()
+  await page.getByRole('button', { name: '강릉' }).click()
+  await page.getByRole('button', { name: /오늘/ }).click()
+  await page.getByRole('button', { name: /^11:30/ }).click()
+  await page.getByRole('button', { name: '7번 좌석', exact: true }).click()
+
+  await expect(page.getByRole('heading', { name: '예매 내용을 확인하세요' })).toBeVisible()
+  await page.getByRole('button', { name: '결제하기' }).click()
+  await page.getByRole('button', { name: '신용/체크카드' }).click()
+  await page.getByRole('button', { name: '결제 완료' }).click()
+
+  await expect(page.getByRole('heading', { name: '예매가 완료되었습니다' })).toBeVisible()
+  await expect(page.getByText('7번', { exact: true }).first()).toBeVisible()
+})
+
 /**
  * TC-01 ~ TC-06을 하나의 사용자 여정으로 검증한다.
  * 같은 BrowserContext의 두 Page를 사용해야 localStorage와 BroadcastChannel을 공유한다.
