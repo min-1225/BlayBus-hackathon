@@ -164,8 +164,18 @@ export const handlers = [
       return errorResponse(409, 'INVALID_SESSION_STATUS', '완료할 수 있는 상태가 아닙니다.')
     }
 
-    if (!session.seatNo) {
-      return errorResponse(400, 'VALIDATION_ERROR', '좌석을 먼저 선택해야 합니다.')
+    if (
+      !session.destination ||
+      !session.travelDate ||
+      !session.departureTime ||
+      !session.busGrade ||
+      !session.seatNo
+    ) {
+      return errorResponse(
+        400,
+        'VALIDATION_ERROR',
+        '목적지, 날짜, 시간, 버스, 좌석을 모두 입력해야 합니다.',
+      )
     }
 
     const saved = saveSession({ ...session, status: 'COMPLETED', currentStep: 'COMPLETED' })

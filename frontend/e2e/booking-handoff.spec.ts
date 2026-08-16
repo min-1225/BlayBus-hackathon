@@ -45,15 +45,9 @@ test('키오스크 예매를 직원이 이어받아 완료하면 키오스크가
 
   try {
     await kioskPage.goto('/kiosk')
-    await kioskPage.getByRole('button', { name: '강릉' }).click()
+    await kioskPage.getByRole('button', { name: '춘천' }).click()
 
     await expect(kioskPage.getByRole('heading', { name: '출발 날짜를 선택하세요' })).toBeVisible()
-    await kioskPage.getByRole('button', { name: /오늘/ }).click()
-
-    await expect(kioskPage.getByRole('heading', { name: '출발 시간을 선택하세요' })).toBeVisible()
-    await kioskPage.getByRole('button', { name: /^11:30/ }).click()
-
-    await expect(kioskPage.getByRole('heading', { name: '좌석을 선택하세요' })).toBeVisible()
     await kioskPage.getByRole('button', { name: '직원 도움 요청' }).click()
     await kioskPage.getByRole('button', { name: '여기까지 저장하고 도움받기' }).click()
 
@@ -66,13 +60,22 @@ test('키오스크 예매를 직원이 이어받아 완료하면 키오스크가
     await staffPage.goto('/staff')
     await staffPage.locator('#transfer-code').fill(transferCode!)
     await staffPage.getByRole('button', { name: '예매 불러오기' }).click()
-    await expect(staffPage.getByText('동서울 → 강릉')).toBeVisible()
+    await expect(staffPage.getByText('동서울 → 춘천')).toBeVisible()
 
     await staffPage.getByRole('button', { name: '이 예매 이어받기' }).click()
+    await expect(staffPage.getByText('미완료 항목 · 날짜, 시간, 버스, 좌석')).toBeVisible()
+    await expect(staffPage.getByRole('button', { name: '예매 완료 처리' })).toBeDisabled()
+
+    await staffPage.getByLabel('출발 날짜').fill('2026-08-20')
+    await staffPage.getByLabel('출발 시간과 버스').selectOption('12:15|STANDARD')
     await expect(staffPage.getByLabel('좌석 번호')).toBeVisible()
     await staffPage.getByLabel('좌석 번호').fill('7')
-    await staffPage.getByRole('button', { name: '좌석 저장' }).click()
+    await staffPage.getByRole('button', { name: '예매 정보 저장' }).click()
+    await expect(staffPage.getByText('2026-08-20', { exact: true })).toBeVisible()
+    await expect(staffPage.getByText('12:15', { exact: true })).toBeVisible()
+    await expect(staffPage.getByText('일반', { exact: true })).toBeVisible()
     await expect(staffPage.getByLabel('좌석 번호')).toHaveValue('7')
+    await expect(staffPage.getByText(/미완료 항목/)).toHaveCount(0)
 
     await staffPage.getByRole('button', { name: '예매 완료 처리' }).click()
     await expect(staffPage.getByRole('heading', { name: '예매 완료' })).toBeVisible()

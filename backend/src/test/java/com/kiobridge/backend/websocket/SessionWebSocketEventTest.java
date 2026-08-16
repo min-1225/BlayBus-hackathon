@@ -89,7 +89,9 @@ class SessionWebSocketEventTest {
         mvc().perform(post("/api/v1/sessions/" + id + "/claim")).andExpect(status().isOk());
         mvc().perform(patch("/api/v1/sessions/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"seatNo\":\"7\"}"))
+                        .content("{\"destination\":\"강릉\",\"travelDate\":\"2026-08-20\","
+                                + "\"departureTime\":\"11:30\",\"busGrade\":\"PREMIUM\","
+                                + "\"seatNo\":\"7\"}"))
                 .andExpect(status().isOk());
         clearInvocations(messagingTemplate);
 
