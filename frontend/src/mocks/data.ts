@@ -132,3 +132,13 @@ export function seatLayout(busGrade: BusGrade) {
 
 /** 데모에서 "이미 팔린 좌석"으로 보여줄 번호. */
 export const OCCUPIED_SEATS = ['3', '4', '8', '12', '15', '16', '21']
+
+/** 버스 등급에 맞는 좌석 중 판매 완료 좌석을 제외한 선택 가능 번호. */
+export function availableSeatNumbers(busGrade: BusGrade): string[] {
+  const layout = seatLayout(busGrade)
+  const seatCount = layout.rows * layout.seatsPerRow
+
+  return Array.from({ length: seatCount }, (_, index) => String(index + 1)).filter(
+    (seatNo) => !OCCUPIED_SEATS.includes(seatNo),
+  )
+}

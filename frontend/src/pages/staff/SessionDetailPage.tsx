@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { StaffLayout } from './StaffLayout'
 import { claimSession, completeSession, updateSession } from '@/api/sessionApi'
@@ -6,8 +6,9 @@ import { toUserMessage } from '@/api/http'
 import { BigButton } from '@/components/BigButton'
 import { ErrorView, LoadingView } from '@/components/StatusView'
 import { useSessionQuery } from '@/hooks/useSessionQuery'
-import { SCHEDULES } from '@/mocks/data'
+import { availableSeatNumbers, SCHEDULES } from '@/mocks/data'
 import { STEP_LABEL, type BusGrade } from '@/types/session'
+import { createDateOptions } from '@/utils/dateOptions'
 
 /**
  * 이어받은 예매 상세 — 직원이 남은 항목을 채우는 화면.
@@ -22,6 +23,9 @@ export default function SessionDetailPage() {
   )
   const [isClaiming, setIsClaiming] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [scheduleOverride, setScheduleOverride] = useState<string | null>(null)
+  const [seatOverride, setSeatOverride] = useState<string | null>(null)
+  const dateOptions = useMemo(() => createDateOptions(), [])
 
   async function claim() {
     if (!session || isClaiming) return
@@ -111,8 +115,12 @@ export default function SessionDetailPage() {
     !session.seatNo && '좌석',
   ].filter(Boolean) as string[]
   const scheduleOptions = session.destination ? (SCHEDULES[session.destination] ?? []) : []
-  const selectedSchedule =
+  const sessionSchedule =
     session.departureTime && session.busGrade ? `${session.departureTime}|${session.busGrade}` : ''
+  const selectedSchedule = scheduleOverride ?? sessionSchedule
+  const selectedSeat = seatOverride ?? session.seatNo ?? ''
+  const selectedBusGrade = selectedSchedule.split('|')[1] as BusGrade | undefined
+  const availableSeats = selectedBusGrade ? availableSeatNumbers(selectedBusGrade) : []
 
   return (
     <StaffLayout
@@ -144,20 +152,29 @@ export default function SessionDetailPage() {
       {session.status === 'CLAIMED' && (
         <div className="space-y-4">
           <form
-            action={saveBookingDetails}
+            onSubmit={(event) => {
+              event.preventDefault()
+              void saveBookingDetails(new FormData(event.currentTarget))
+            }}
             className="bg-surface border-line space-y-3 rounded-lg border p-5"
           >
             <label htmlFor="travel-date" className="block font-bold">
               출발 날짜
             </label>
-            <input
+            <select
               id="travel-date"
               name="travelDate"
-              type="date"
               required
               defaultValue={session.travelDate ?? ''}
-              className="border-line w-full rounded-lg border px-4 py-3 text-xl font-bold"
-            />
+              className="border-line bg-surface w-full rounded-lg border px-4 py-3 text-xl font-bold"
+            >
+              <option value="">날짜를 선택하세요</option>
+              {dateOptions.map((date) => (
+                <option key={date.value} value={date.value}>
+                  {date.label} · {date.value}
+                </option>
+              ))}
+            </select>
 
             <label htmlFor="schedule" className="block font-bold">
               출발 시간과 버스
@@ -166,7 +183,11 @@ export default function SessionDetailPage() {
               id="schedule"
               name="schedule"
               required
-              defaultValue={selectedSchedule}
+              value={selectedSchedule}
+              onChange={(event) => {
+                setScheduleOverride(event.target.value)
+                setSeatOverride('')
+              }}
               className="border-line bg-surface w-full rounded-lg border px-4 py-3 text-xl font-bold"
             >
               <option value="">시간과 버스를 선택하세요</option>
@@ -185,13 +206,24 @@ export default function SessionDetailPage() {
             <label htmlFor="seat-no" className="block font-bold">
               좌석 번호
             </label>
-            <input
+            <select
               id="seat-no"
               name="seatNo"
-              defaultValue={session.seatNo ?? ''}
-              inputMode="numeric"
-              className="border-line w-full rounded-lg border px-4 py-3 text-xl font-bold"
-            />
+              required
+              value={selectedSeat}
+              onChange={(event) => setSeatOverride(event.target.value)}
+              disabled={!selectedBusGrade}
+              className="border-line bg-surface w-full rounded-lg border px-4 py-3 text-xl font-bold disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="">
+                {selectedBusGrade ? '좌석을 선택하세요' : '시간과 버스를 먼저 선택하세요'}
+              </option>
+              {availableSeats.map((seatNo) => (
+                <option key={seatNo} value={seatNo}>
+                  {seatNo}번
+                </option>
+              ))}
+            </select>
             <BigButton type="submit" variant="secondary" disabled={isSaving}>
               예매 정보 저장
             </BigButton>
