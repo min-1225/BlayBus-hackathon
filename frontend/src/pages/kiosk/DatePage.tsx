@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { KioskLayout } from '@/components/KioskLayout'
 import { useKioskSession } from '@/session/kioskSessionContext'
+import { createDateOptions } from '@/utils/dateOptions'
 
 /**
  * 날짜 선택.
@@ -53,30 +54,4 @@ export default function DatePage() {
       </div>
     </KioskLayout>
   )
-}
-
-interface DateOption {
-  value: string
-  label: string
-}
-
-function createDateOptions(): DateOption[] {
-  const weekday = ['일', '월', '화', '수', '목', '금', '토']
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  return Array.from({ length: 7 }, (_, offset) => {
-    const date = new Date(today)
-    date.setDate(today.getDate() + offset)
-
-    const value = [
-      date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, '0'),
-      String(date.getDate()).padStart(2, '0'),
-    ].join('-')
-    const relativeLabel = offset === 0 ? '오늘' : offset === 1 ? '내일' : ''
-    const calendarLabel = `${date.getMonth() + 1}월 ${date.getDate()}일 (${weekday[date.getDay()]})`
-
-    return { value, label: relativeLabel ? `${relativeLabel} · ${calendarLabel}` : calendarLabel }
-  })
 }
