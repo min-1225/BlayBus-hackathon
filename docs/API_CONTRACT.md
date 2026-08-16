@@ -291,6 +291,16 @@ POST /api/v1/sessions/{sessionId}/complete
 
 직원이 필요한 값을 먼저 `PATCH`하여 저장합니다.
 
+완료에 필요한 필수값:
+
+- `destination`
+- `travelDate`
+- `departureTime`
+- `busGrade`
+- `seatNo`
+
+하나라도 비어 있으면 `400 VALIDATION_ERROR`를 반환합니다.
+
 동작:
 
 ```text

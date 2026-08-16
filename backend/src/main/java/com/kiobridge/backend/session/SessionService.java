@@ -146,7 +146,7 @@ public class SessionService {
         return session;
     }
 
-    /** ACTIVE 또는 CLAIMED → COMPLETED. 좌석이 지정되지 않았으면 완료할 수 없다. */
+    /** ACTIVE 또는 CLAIMED → COMPLETED. 예매 필수 정보가 모두 지정되어야 한다. */
     @Transactional
     public OrderSession complete(Long sessionId) {
         OrderSession session = get(sessionId);
@@ -156,8 +156,15 @@ public class SessionService {
             throw new ApiException(ErrorCode.INVALID_SESSION_STATUS, "완료할 수 있는 상태가 아닙니다.");
         }
 
-        if (session.getSeatNo() == null || session.getSeatNo().isBlank()) {
-            throw new ApiException(ErrorCode.VALIDATION_ERROR, "좌석을 먼저 선택해야 합니다.");
+        if (session.getDestination() == null || session.getDestination().isBlank()
+                || session.getTravelDate() == null
+                || session.getDepartureTime() == null
+                || session.getBusGrade() == null
+                || session.getSeatNo() == null || session.getSeatNo().isBlank()) {
+            throw new ApiException(
+                    ErrorCode.VALIDATION_ERROR,
+                    "목적지, 날짜, 시간, 버스, 좌석을 모두 입력해야 합니다."
+            );
         }
 
         session.setStatus(SessionStatus.COMPLETED);

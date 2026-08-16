@@ -168,7 +168,7 @@ class SessionApiIntegrationTest {
                 .andExpect(jsonPath("$.code").value("INVALID_SESSION_STATUS"));
     }
 
-    // ------- 10. 좌석 없는 Complete → 400 VALIDATION_ERROR -------
+    // ------- 10. 필수 예매 정보 없는 Complete → 400 VALIDATION_ERROR -------
     @Test
     void complete_withoutSeatReturnsValidationError() throws Exception {
         long id = createSession();
@@ -179,13 +179,25 @@ class SessionApiIntegrationTest {
                 .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
-    // ------- 11. 좌석 PATCH 후 Complete: CLAIMED → COMPLETED -------
     @Test
-    void complete_afterSeatPatchMovesToCompleted() throws Exception {
+    void complete_withSeatOnlyReturnsValidationError() throws Exception {
         long id = createSession();
         issueTransfer(id);
         claim(id);
         patchSeat(id, "7");
+
+        mvc().perform(post("/api/v1/sessions/" + id + "/complete"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+    }
+
+    // ------- 11. 필수 예매 정보 PATCH 후 Complete: CLAIMED → COMPLETED -------
+    @Test
+    void complete_afterRequiredFieldsPatchMovesToCompleted() throws Exception {
+        long id = createSession();
+        issueTransfer(id);
+        claim(id);
+        patchRequiredBookingFields(id, "7");
         mvc().perform(post("/api/v1/sessions/" + id + "/complete"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("COMPLETED"))
@@ -194,9 +206,9 @@ class SessionApiIntegrationTest {
     }
 
     @Test
-    void customerCanCompleteActiveSessionAfterSelectingSeat() throws Exception {
+    void customerCanCompleteActiveSessionAfterSelectingRequiredFields() throws Exception {
         long id = createSession();
-        patchSeat(id, "7");
+        patchRequiredBookingFields(id, "7");
 
         mvc().perform(post("/api/v1/sessions/" + id + "/complete"))
                 .andExpect(status().isOk())
@@ -211,7 +223,7 @@ class SessionApiIntegrationTest {
         long id = createSession();
         issueTransfer(id);
         claim(id);
-        patchSeat(id, "7");
+        patchRequiredBookingFields(id, "7");
         mvc().perform(post("/api/v1/sessions/" + id + "/complete")).andExpect(status().isOk());
 
         mvc().perform(patch("/api/v1/sessions/" + id)
@@ -293,6 +305,15 @@ class SessionApiIntegrationTest {
         mvc().perform(patch("/api/v1/sessions/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"seatNo\":\"" + seat + "\"}"))
+                .andExpect(status().isOk());
+    }
+
+    private void patchRequiredBookingFields(long id, String seat) throws Exception {
+        mvc().perform(patch("/api/v1/sessions/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"destination\":\"강릉\",\"travelDate\":\"2026-08-20\","
+                                + "\"departureTime\":\"11:30\",\"busGrade\":\"PREMIUM\","
+                                + "\"seatNo\":\"" + seat + "\"}"))
                 .andExpect(status().isOk());
     }
 
